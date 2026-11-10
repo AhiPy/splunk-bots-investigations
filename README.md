@@ -31,6 +31,10 @@ Cada passo explica **por que** foi dado e **como se liga ao anterior**.
 
 Montagem do laboratório passo a passo: [setup.md](setup.md).
 
+## Sobre o processo
+
+As investigações foram executadas por mim no meu laboratório local. Usei o Claude (IA) como mentor durante o estudo: para explicar comandos SPL, discutir hipóteses e revisar a documentação. Todas as queries foram rodadas e todos os resultados foram analisados e validados por mim.
+
 ## Autor
 
 **Vinicius Henrique**, Analista de Cibersegurança (Trainee), com foco em SOC N1.
