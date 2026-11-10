@@ -1,8 +1,18 @@
-# Montagem do laboratório
+<div align="center">
 
-Como o ambiente de investigação foi montado num Splunk Enterprise local (Windows).
+# `setup` · Montagem do laboratório
 
-## 1. Dataset
+![Splunk](https://img.shields.io/badge/Splunk-Enterprise%2010.4.3-0d1117?style=for-the-badge&logo=splunk&logoColor=00e5ff)
+![Windows](https://img.shields.io/badge/host-Windows-0d1117?style=for-the-badge&logoColor=00e5ff)
+![Licença](https://img.shields.io/badge/licen%C3%A7a-Free-0d1117?style=for-the-badge&logoColor=ff7a1a)
+
+**Como o ambiente de investigação foi montado num Splunk Enterprise local.**
+
+</div>
+
+---
+
+## `$ 1. dataset`
 
 - Download: [botsv3_data_set.tgz](https://botsdataset.s3.amazonaws.com/botsv3/botsv3_data_set.tgz) (320,1 MB, pré-indexado)
 - Integridade conferida antes da instalação:
@@ -12,7 +22,7 @@ certutil -hashfile botsv3_data_set.tgz MD5
 # esperado: d7ccca99a01cff070dff3c139cdc10eb
 ```
 
-## 2. Instalação
+## `$ 2. instalacao`
 
 ```powershell
 & "C:\Program Files\Splunk\bin\splunk.exe" stop
@@ -28,7 +38,7 @@ botsv3_data_set\default\props.conf, line 102: Cannot parse into key-value pair: 
 
 É uma linha malformada na configuração original do dataset (2018). O Splunk 10.4 apenas ignora essa regra. Não afeta as investigações.
 
-## 3. Add-ons
+## `$ 3. add-ons`
 
 O README oficial pede Splunk 7.1.7 e 26 add-ons em versões exatas, muitos deles descontinuados. Foram instaladas as versões atuais dos add-ons necessários para o foco do estudo:
 
@@ -40,7 +50,7 @@ O README oficial pede Splunk 7.1.7 e 26 add-ons em versões exatas, muitos deles
 
 Instalação via **Apps → Manage Apps → Install app from file**, com os pacotes baixados do Splunkbase.
 
-## 4. Problemas encontrados
+## `$ 4. problemas --resolvidos`
 
 | Problema | Causa | Solução |
 | --- | --- | --- |
@@ -48,7 +58,7 @@ Instalação via **Apps → Manage Apps → Install app from file**, com os paco
 | Buscas bloqueadas: *"Your Splunk license expired"* | Licença Trial de 60 dias vencida | Troca para **Free license** (Settings → Licensing). O dataset é pré-indexado e não conta no limite de 500 MB/dia |
 | Sysmon não encontrado pelo sourcetype do README | O add-on atual usa outro nome | Sysmon está em `sourcetype=XmlWinEventLog`, `source="WinEventLog:Microsoft-Windows-Sysmon/Operational"` |
 
-## 5. Validação
+## `$ 5. validacao`
 
 ```spl
 index=botsv3 earliest=0
@@ -68,3 +78,11 @@ index=botsv3 earliest=0 sysmon
 ```
 
 ![Source do Sysmon](assets/setup/02-sysmon-source.png)
+
+---
+
+<div align="center">
+
+[← voltar para os casos](README.md)
+
+</div>
