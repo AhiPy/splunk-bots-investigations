@@ -1,0 +1,77 @@
+```Investigação 01: Cryptojacking via Coinhive em fórum externo (Splunk BOTS v3)```
+```Cada bloco pode ser colado direto na busca do Splunk. Comentários entre três crases são ignorados pelo SPL.```
+
+
+```=== Passo 1: inventário das máquinas Windows (quem existe e quem foge do padrão) ===```
+index=botsv3 earliest=0 (sourcetype=WinEventLog OR sourcetype=XmlWinEventLog OR sourcetype=WinHostMon)
+| stats count dc(sourcetype) as fontes by host    ```eventos e nº de fontes diferentes por máquina```
+| sort - count
+
+
+```=== Passo 2: de onde vem o volume extra do BSTOLL-L ===```
+index=botsv3 earliest=0 host=BSTOLL-L
+| stats count by sourcetype source    ```quanto cada tipo/origem de log gerou```
+| sort - count
+
+
+```=== Passo 3: qual processo consome mais CPU (triagem: média alta e constante > pico isolado) ===```
+index=botsv3 earliest=0 host=BSTOLL-L sourcetype="PerfmonMk:Process"
+| stats avg("%_Processor_Time") as cpu_media max("%_Processor_Time") as cpu_max count by instance    ```instance = nome do processo```
+| sort - cpu_media
+| head 10
+
+
+```=== Passo 4: quando o consumo do Chrome começou (linha do tempo a cada 10 min) ===```
+index=botsv3 earliest=0 host=BSTOLL-L sourcetype="PerfmonMk:Process" instance=chrome*
+| timechart span=10m avg("%_Processor_Time") by instance
+| fillnull value=0                                        ```célula vazia vira 0```
+| foreach chrome* [eval <<FIELD>>=round('<<FIELD>>', 1)]  ```arredonda todas as colunas chrome*```
+| addtotals fieldname=TOTAL_chrome                        ```soma do navegador inteiro```
+
+
+```=== Passo 5: domínios consultados na janela do pico (por volume, mostra o ruído) ===```
+index=botsv3 host=BSTOLL-L sourcetype=stream:dns
+    earliest="08/20/2018:10:15:00" latest="08/20/2018:10:45:00"    ```começa antes do pico: a causa vem antes do efeito```
+| stats count by query
+| sort - count
+| head 30
+
+
+```=== Passo 6: remover o conhecido e ordenar por primeira aparição ===```
+index=botsv3 host=BSTOLL-L sourcetype=stream:dns
+    earliest="08/20/2018:10:20:00" latest="08/20/2018:10:40:00"
+| where like(query, "%.%")    ```só nomes com ponto: elimina NetBIOS```
+| search NOT query="wpad*" NOT query="*localdomain" NOT query="*.froth.ly" NOT query="*.arpa" NOT query="*microsoft*" NOT query="*live.com"    ```ruído já identificado```
+| stats count min(_time) as primeira_vez by query
+| sort primeira_vez    ```ordem cronológica```
+| eval primeira_vez=strftime(primeira_vez, "%H:%M:%S")
+
+
+```=== Passo 7: qual página carregou o Coinhive (HTTP + referer) ===```
+index=botsv3 host=BSTOLL-L sourcetype=stream:http
+    earliest="08/20/2018:10:30:00" latest="08/20/2018:10:45:00"
+| table _time site uri_path http_referrer status
+| sort _time
+
+
+```=== Passo 8: escopo. O indicador "coinhive" em todas as fontes e máquinas ===```
+index=botsv3 earliest=0 coinhive    ```busca de texto livre```
+| stats count min(_time) as primeira max(_time) as ultima by sourcetype host
+| convert ctime(primeira) ctime(ultima)
+| sort primeira
+
+
+```=== Passo 9: detecções do antivírus (nome da ameaça, não o domínio) ===```
+index=botsv3 earliest=0 sourcetype=symantec:* (coin* OR *miner* OR jscoin*)
+| table _time host sourcetype _raw
+| sort _time
+
+
+```=== Passo 10: resumo das detecções por máquina (extração manual com rex) ===```
+index=botsv3 earliest=0 sourcetype=symantec:* (coin* OR *miner* OR jscoin*)
+| rex ",(?:Major|Critical|Minor|Info)[^,]*,(?<computador>[^,]+),"    ```máquina, logo após a gravidade```
+| rex "User: (?<usuario>[^,]+),"                                     ```usuário```
+| rex "\[SID: \d+\] (?<assinatura>[^.]+)\."                          ```nome do ataque```
+| stats count min(_time) as primeira max(_time) as ultima values(assinatura) as assinaturas values(usuario) as usuarios by computador
+| convert ctime(primeira) ctime(ultima)
+| sort primeira
