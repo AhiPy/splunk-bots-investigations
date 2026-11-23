@@ -28,7 +28,7 @@ analista@soc:~$ cat incidente.txt
 ```
 
 > [!NOTE]
-> Os horários estão como exibidos no Splunk, com o usuário configurado em **GMT-04:00**. Os logs do Symantec registram internamente outro horário (ex.: `13:37:40` no log contra `10:37:40` no `_time`). Ao correlacionar, sempre usar o `_time` do Splunk.
+> Os horários estão como exibidos no meu Splunk, em **GMT-03:00 (Brasília)**. Os logs do Symantec registram internamente a hora em UTC, 3 horas à frente (ex.: `13:37:40` no log contra `10:37:40` no `_time`). Ao correlacionar, sempre usar o `_time` do Splunk.
 
 ## `$ cat veredito.txt`
 
