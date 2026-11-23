@@ -11,7 +11,7 @@
 
 <br>
 
-![Casos](https://img.shields.io/badge/casos%20resolvidos-1%20de%203-ff7a1a?style=flat-square&labelColor=0d1117)
+![Casos](https://img.shields.io/badge/casos%20resolvidos-2%20de%205-ff7a1a?style=flat-square&labelColor=0d1117)
 ![Eventos](https://img.shields.io/badge/eventos-2.083.056-00e5ff?style=flat-square&labelColor=0d1117)
 ![Fontes](https://img.shields.io/badge/sourcetypes-102-00e5ff?style=flat-square&labelColor=0d1117)
 
@@ -28,22 +28,33 @@ analista@soc:~$ cat caso.txt
 > DATASET ...... Splunk BOTS v3 · 2 milhões de eventos · 102 fontes
 > PAPEL ........ Analista de SOC N1 de plantão
 > MISSÃO ....... descobrir o que aconteceu, onde, com quem e quando, e documentar
-> STATUS ....... ███████░░░░░░░░░░░░░░░ caso 01 de 03 resolvido
+> STATUS ....... █████████░░░░░░░░░░░░░ 2 de 5 casos resolvidos
 ```
 
 ## `$ whoami`
 
 Este repositório simula o trabalho de um **Analista de SOC N1**: partir de uma anomalia, levantar hipóteses, escrever SPL, **correlacionar fontes diferentes** e fechar cada caso com evidência, escopo, conclusão e mapeamento no **MITRE ATT&CK**.
 
-Cada passo explica **por que** foi dado e **como se liga ao anterior**. O objetivo é mostrar o raciocínio, não só as queries.
+Cada passo explica **por que** foi dado e **como se liga ao anterior**. O objetivo é mostrar o raciocínio, não só as queries. Quando uma busca deu errado, deixei registrado também: errar o nome de um campo e entender por quê faz parte do trabalho.
+
+## `$ cat historia.txt`
+
+O BOTS v3 é um ambiente só, com vários incidentes acontecendo no mesmo dia (20/08/2018):
+
+- **A empresa:** a Frothly, fornecedora de produtos para cerveja caseira. Quase todo nome no cenário é trocadilho com cerveja.
+- **O enredo principal:** o FBI avisa a CEO, **Grace Hoppy**, que a empresa foi invadida pelo **Taedonggang**, um grupo APT do leste asiático que ataca cervejarias ocidentais. Os casos 02 em diante seguem esse fio.
+- **Incidentes paralelos:** o caso 01 (Coinhive) não tem ligação com o APT. É um problema real que aconteceu no mesmo dia.
+- **Nuvem:** a Frothly também tem problemas de configuração na AWS, investigados à parte.
 
 ## `$ ls ./casos`
 
 | # | Caso | Fontes correlacionadas | MITRE ATT&CK | Status |
 | :-: | :-- | :-- | :-- | :-: |
 | 01 | **[Cryptojacking via Coinhive em fórum externo](01-cryptojacking-coinhive/)**<br><sub>Uma anomalia de volume de logs leva a um minerador de Monero rodando no navegador de 3 notebooks</sub> | Perfmon · DNS · HTTP · syslog · Symantec | T1189 · T1496 | ![resolvido](https://img.shields.io/badge/-resolvido-2bd576?style=flat-square) |
-| 02 | Investigação com foco em DNS | — | — | ![em andamento](https://img.shields.io/badge/-em%20andamento-ff7a1a?style=flat-square) |
-| 03 | Investigação com foco em HTTP | — | — | ![planejada](https://img.shields.io/badge/-planejada-6e7a8c?style=flat-square) |
+| 02 | **[Phishing com macro e contas comprometidas](02-phishing-contas-comprometidas/)**<br><sub>O phishing do APT foi barrado, mas veio de dentro: o mesmo IP de Hong Kong tinha login válido em duas contas da empresa</sub> | SMTP · Office 365 · Sysmon · antivírus · Azure AD | T1566.001 · T1078.004 | ![resolvido](https://img.shields.io/badge/-resolvido-2bd576?style=flat-square) |
+| 03 | O que o atacante fez dentro das contas (Office 365) | — | — | ![próximo](https://img.shields.io/badge/-pr%C3%B3ximo-ff7a1a?style=flat-square) |
+| 04 | Atividade do APT nos endpoints Windows | — | — | ![planejada](https://img.shields.io/badge/-planejada-6e7a8c?style=flat-square) |
+| 05 | Auditoria da conta AWS (CloudTrail) | — | — | ![planejada](https://img.shields.io/badge/-planejada-6e7a8c?style=flat-square) |
 
 ## `$ ./investigar --metodo`
 
@@ -75,13 +86,19 @@ Todo caso tem: **resumo**, **linha do tempo**, **investigação passo a passo** 
 
 ## `$ cat ./sobre-o-processo.md`
 
-As investigações foram executadas por mim no meu laboratório local. Usei o Claude (IA) como mentor durante o estudo: para explicar comandos SPL, discutir hipóteses e revisar a documentação. Todas as queries foram rodadas e todos os resultados foram analisados e validados por mim.
+Este é um projeto de estudo, e quero ser transparente sobre como ele foi feito.
+
+- **O que é meu:** montei o laboratório, rodei todas as queries no meu Splunk, li os resultados, levantei as hipóteses e tirei os prints. Nenhum resultado aqui foi inventado ou copiado de writeups.
+- **Onde a IA entrou:** usei o **Claude** (Anthropic) como mentor durante as investigações, para explicar comandos SPL e campos de log, discutir hipóteses e apontar quando eu estava indo pelo caminho errado. Ele também me ajudou a redigir e organizar os READMEs a partir das minhas anotações e prints. Revisei todo o texto antes de publicar.
+- **Por que conto isso:** usar IA como apoio de estudo é parte de como trabalho hoje, e prefiro que fique claro o que eu sei fazer sozinho e onde tive ajuda.
+
+Os commits feitos com apoio da IA levam a linha `Co-Authored-By` correspondente.
 
 ---
 
 <div align="center">
 
-Desenvolvido por **[Vinicius Henrique (AhiPy)](https://github.com/AhiPy)**, Analista de Cibersegurança (Trainee) com foco em SOC N1
+Desenvolvido por **[Vinicius Henrique (AhiPy)](https://github.com/AhiPy)**, Analista de Segurança da Informação Júnior com foco em SOC N1
 
 <a href="https://www.linkedin.com/in/vinicius-henrique-dev/"><img src="https://img.shields.io/badge/LinkedIn-vinicius--henrique--dev-0d1117?style=for-the-badge&logo=linkedin&logoColor=00e5ff" alt="LinkedIn"></a>
 

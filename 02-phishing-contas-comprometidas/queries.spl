@@ -1,0 +1,52 @@
+```Investigação 02: Phishing com macro e contas comprometidas (Splunk BOTS v3)```
+```Cada bloco pode ser colado direto na busca do Splunk, com o seletor de tempo em All time.```
+```Comentários entre três crases são ignorados pelo SPL.```
+
+
+```=== Passo 0: mapa das fontes (que tipos de log existem) ===```
+| tstats count where index=botsv3 by sourcetype    ```contagem rápida pelos metadados indexados```
+| sort -count
+
+
+```=== Passo 1: onde estão os e-mails ===```
+| tstats count where index=botsv3 by sourcetype
+| search sourcetype=*smtp* OR sourcetype=*o365* OR sourcetype=*mail*    ```só os tipos de log de e-mail```
+
+
+```=== Passo 2: como é um e-mail nesse log (abrir um evento e ver os campos) ===```
+index=botsv3 sourcetype=stream:smtp
+
+
+```=== Passo 3: e-mails com anexo ===```
+```campo que é lista ganha {} no nome: attach_filename{} e receiver{}```
+index=botsv3 sourcetype=stream:smtp attach_filename{}=*
+| table _time sender receiver{} subject attach_filename{}
+
+
+```=== Passo 4: abrir o e-mail suspeito (ler content_body e content) ===```
+index=botsv3 sourcetype=stream:smtp subject="Draft Financial Plan for Brewery FY2019"
+
+
+```=== Passo 5: o arquivo aparece em outro lugar? ===```
+```o nome exato voltou vazio: no disco o Windows salvou como ...Draft[66].xlsm```
+index=botsv3 FY2019    ```busca solta, qualquer fonte```
+
+
+```=== Passo 6: em quais hosts e fontes ===```
+index=botsv3 FY2019
+| table _time host sourcetype
+
+
+```=== Passo 7: rastreio oficial do e-mail no Office 365 (quarentena x entregue) ===```
+index=botsv3 sourcetype=ms:o365:reporting:messagetrace FY2019
+| table _time SenderAddress RecipientAddress Subject Status FromIP
+
+
+```=== Passo 8: pivô no IP de origem ===```
+index=botsv3 104.207.83.63
+| table _time host sourcetype
+
+
+```=== Passo 9: quem fez login a partir desse IP e de onde ===```
+```depois de rodar, clicar em userPrincipalName e location.city na barra lateral```
+index=botsv3 sourcetype=ms:aad:signin 104.207.83.63
