@@ -7,7 +7,7 @@
   @page {
     size: A4;
     margin: 18mm 17mm 20mm 17mm;
-    @bottom-left { content: "Relatório de Incidentes · Frothly · v1.0"; font: 400 7.5pt Inter, sans-serif; color: #8a8984; }
+    @bottom-left { content: "Relatório de Incidentes · Frothly · v1.1"; font: 400 7.5pt Inter, sans-serif; color: #8a8984; }
     @bottom-right { content: "página " counter(page); font: 400 7.5pt Inter, sans-serif; color: #8a8984; }
   }
   @page :first {
@@ -134,6 +134,7 @@
   .group h3 { margin: 0 0 2mm; display: flex; align-items: center; gap: 2.5mm; }
   .group.now { border-top: 3px solid var(--critical); }
   .group.soon { border-top: 3px solid var(--warning); }
+  .group.later { break-before: page; }
   .group.later { border-top: 3px solid var(--accent); }
   .check { display: grid; grid-template-columns: 5mm 1fr; gap: 1mm 2mm; padding: 1.8mm 0; border-bottom: 1px dashed var(--line); break-inside: avoid; }
   .check:last-child { border-bottom: 0; }
@@ -153,7 +154,7 @@
 <div class="cover">
   <div class="tag">SEGURANÇA DA INFORMAÇÃO · SOC</div>
   <h1>Relatório de<br>Incidentes</h1>
-  <div class="sub">Invasão da Frothly por um grupo organizado: o que aconteceu, o que isso significa para a empresa e o que precisa ser feito.</div>
+  <div class="sub">Invasão da Frothly por um grupo organizado e exposição de dados na nuvem: o que aconteceu, o que isso significa para a empresa e o que precisa ser feito.</div>
   <div class="bar"></div>
 
   <svg class="wave" width="420" height="126" viewBox="0 0 300 90" aria-hidden="true">
@@ -170,14 +171,14 @@
     <div><span>Empresa</span>Frothly (fornecedora de produtos para cerveja caseira)</div>
     <div><span>Data dos incidentes</span>20 de agosto de 2018</div>
     <div><span>Público</span>Diretoria e gestão</div>
-    <div><span>Versão</span>1.0 · 24 de novembro de 2026</div>
+    <div><span>Versão</span>1.1 · 24 de novembro de 2026</div>
     <div><span>Investigação</span>Vinicius Henrique (AhiPy)</div>
-    <div><span>Casos analisados</span>3 de 5</div>
+    <div><span>Casos analisados</span>5 de 5 (investigação concluída)</div>
   </div>
 
   <div class="status">
     <span class="pill crit">RISCO ATUAL: CRÍTICO</span>
-    <span><b>Vazamento de e-mails em andamento.</b> Decisão necessária hoje (página 2).</span>
+    <span><b>O invasor controla um computador e recebe nossos e-mails.</b> Decisão necessária hoje (página 2).</span>
   </div>
 
   <div class="note">Documento de estudo. A Frothly e as pessoas citadas são fictícias e fazem parte do dataset público Splunk Boss of the SOC v3. Nenhum sistema real foi analisado.</div>
@@ -186,26 +187,26 @@
 <!-- ======================= 1. RESUMO ======================= -->
 <section>
   <h2><span class="n">1</span>Resumo</h2>
-  <p class="lead">A Frothly foi invadida por um grupo criminoso organizado, e o invasor ainda recebe cópias dos nossos e-mails.</p>
+  <p class="lead">A Frothly foi invadida por um grupo criminoso organizado que ainda tem acesso à empresa: controla um computador e recebe cópias dos nossos e-mails. À parte, um erro na nuvem deixou o código do site exposto.</p>
   <ul class="clean">
     <li>O invasor <b>entrou com as senhas corretas de dois funcionários</b>. Não precisou "arrombar" nada.</li>
-    <li>Ele <b>procurou informações financeiras e confidenciais nos e-mails de toda a empresa</b>.</li>
-    <li>Ele <b>criou uma regra no servidor de e-mail que envia cópias escondidas para um endereço externo</b>. Essa regra continua funcionando mesmo se as senhas forem trocadas.</li>
+    <li>Ele <b>vasculhou os e-mails de toda a empresa</b> e <b>criou uma regra que envia cópias escondidas para fora</b>. A regra continua funcionando mesmo se as senhas forem trocadas.</li>
     <li>Ele <b>ganhou permissão para ler e enviar e-mails em nome da CEO</b>, o que abre caminho para fraudes.</li>
-    <li>Ele <b>espalhou um arquivo malicioso disfarçado de "fotos de festa"</b>, que chegou a <b>7 computadores</b>. Ainda estamos verificando se alguém o abriu.</li>
+    <li>Um arquivo malicioso disfarçado de <b>"fotos de festa"</b> chegou a <b>8 computadores</b> e foi aberto em 2. <b>No computador do Fyodor, o invasor assumiu o controle</b>: virou administrador, criou um usuário escondido e uma tarefa que o traz de volta todo dia.</li>
+    <li><b>Na nuvem da Amazon (incidente separado):</b> nenhuma conta usa verificação em duas etapas e, por um erro de configuração, <b>o código do site ficou aberto na internet por 56 minutos</b>. Nesse tempo, um desconhecido <b>substituiu o pacote de instalação do site</b>.</li>
   </ul>
 
   <div class="kpis">
     <div class="kpi crit"><div class="v">2</div><div class="l">contas de funcionários usadas pelo invasor</div></div>
-    <div class="kpi crit"><div class="v">3</div><div class="l">formas de acesso que ele deixou para continuar dentro</div></div>
-    <div class="kpi"><div class="v">7</div><div class="l">computadores que receberam o arquivo malicioso</div></div>
-    <div class="kpi"><div class="v">~1h30</div><div class="l">entre a primeira ação e a mais grave</div></div>
-    <div class="kpi good"><div class="v">2</div><div class="l">ataques bloqueados pelas defesas automáticas</div></div>
+    <div class="kpi crit"><div class="v">1</div><div class="l">computador sob controle do invasor</div></div>
+    <div class="kpi crit"><div class="v">5</div><div class="l">formas de acesso que ele deixou para continuar dentro</div></div>
+    <div class="kpi"><div class="v">56 min</div><div class="l">com o código do site aberto na internet</div></div>
+    <div class="kpi good"><div class="v">3</div><div class="l">tentativas barradas pelas defesas existentes</div></div>
   </div>
 
   <div class="callout crit">
     <span class="t">Decisão necessária hoje</span>
-    Autorizar a remoção imediata da regra de e-mail e dos acessos extras à caixa da CEO, a troca de senhas e o bloqueio dos endereços do invasor. <b>Enquanto a regra existir, os e-mails continuam saindo da empresa.</b> O plano completo está na seção 6.
+    Autorizar o <b>isolamento do computador do Fyodor</b>, a remoção da regra de e-mail e dos acessos extras à caixa da CEO, a troca de senhas, o bloqueio dos endereços do invasor e a <b>restauração do pacote do site</b>. Enquanto isso não for feito, o invasor continua dentro da empresa. O plano completo está na seção 6.
   </div>
 </section>
 
@@ -213,38 +214,42 @@
 <section class="page-break">
   <h2><span class="n">2</span>Situação atual</h2>
   <table>
-    <thead><tr><th style="width:24%">Área</th><th>O que está acontecendo</th><th style="width:30%">O que significa</th><th class="nowrap" style="width:15%">Status</th></tr></thead>
+    <thead><tr><th style="width:23%">Área</th><th>O que está acontecendo</th><th style="width:30%">O que significa</th><th class="nowrap" style="width:14%">Status</th></tr></thead>
     <tbody>
       <tr><td><b>E-mail corporativo</b></td><td>Uma regra no servidor copia e-mails para fora da empresa</td><td>Informação confidencial saindo <b>agora</b></td><td><span class="st crit">Ativo</span></td></tr>
       <tr><td><b>Caixa de e-mail da CEO</b></td><td>Acesso total e envio em nome dela liberados para uma conta comprometida</td><td>Leitura de assuntos sigilosos e <b>fraude por e-mail falso da CEO</b></td><td><span class="st crit">Ativo</span></td></tr>
-      <tr><td><b>Contas de funcionários</b></td><td>2 contas usadas pelo invasor, sem verificação em duas etapas</td><td>Uma delas ainda está ativa</td><td><span class="st serious">Parcial</span></td></tr>
-      <tr><td><b>Computadores</b></td><td>Arquivo malicioso chegou a 7 notebooks</td><td>Possível invasão da rede interna</td><td><span class="st warn">Investigando</span></td></tr>
+      <tr><td><b>Computador do Fyodor</b></td><td>Sob controle do invasor, com um usuário administrador escondido e uma tarefa diária</td><td>Porta de entrada na <b>rede interna</b>, mesmo com senhas trocadas</td><td><span class="st crit">Ativo</span></td></tr>
+      <tr><td><b>Site da empresa</b></td><td>Pacote de instalação do site substituído por um desconhecido</td><td>Servidores novos podem instalar código de terceiros</td><td><span class="st crit">Em risco</span></td></tr>
+      <tr><td><b>Contas de funcionários</b></td><td>2 contas usadas pelo invasor; nenhuma conta usa verificação em duas etapas</td><td>Uma das duas ainda ativa</td><td><span class="st serious">Parcial</span></td></tr>
+      <tr><td><b>Conta da nuvem (AWS)</b></td><td>Uma chave de acesso vazada foi usada de fora</td><td>Barrada por falta de permissão, mas continua válida</td><td><span class="st serious">Parcial</span></td></tr>
+      <tr><td><b>Computador do Bud</b></td><td>Abriu o arquivo malicioso, sem sinal de controle do invasor</td><td>Precisa de confirmação</td><td><span class="st warn">Verificar</span></td></tr>
       <tr><td><b>Ataque por anexo</b></td><td>Planilha maliciosa enviada à diretoria</td><td>Bloqueada pelo filtro de e-mail e pelo antivírus</td><td><span class="st good">Contido</span></td></tr>
       <tr><td><b>Minerador de criptomoeda</b></td><td>Um site externo usou o processador de notebooks</td><td>Incidente isolado, sem roubo de dados</td><td><span class="st good">Encerrado</span></td></tr>
     </tbody>
   </table>
 </section>
 
-<!-- ======================= 5. IMPACTO ======================= -->
-<section>
+<!-- ======================= 3. IMPACTO ======================= -->
+<section class="page-break">
   <h2><span class="n">3</span>Impacto para o negócio</h2>
   <table>
     <thead><tr><th style="width:28%">Risco</th><th>Por que importa</th><th class="nowrap" style="width:17%">Probabilidade</th></tr></thead>
     <tbody>
       <tr><td><b>Vazamento de informação confidencial</b></td><td>E-mails financeiros e estratégicos podem estar com o invasor e com terceiros.</td><td><span class="st crit">Alta</span></td></tr>
       <tr><td><b>Fraude em nome da CEO</b></td><td>Um pedido de pagamento "assinado" pela CEO, saindo da caixa real dela, é muito difícil de identificar.</td><td><span class="st crit">Alta</span></td></tr>
-      <tr><td><b>Invasão dos computadores</b></td><td>Se alguém abriu o arquivo, o invasor pode controlar máquinas da rede interna.</td><td><span class="st warn">Investigando</span></td></tr>
+      <tr><td><b>Invasor dentro da rede interna</b></td><td>Com um computador sob controle e um usuário administrador, ele pode alcançar outras máquinas e dados internos.</td><td><span class="st crit">Confirmado</span></td></tr>
+      <tr><td><b>Site da empresa adulterado</b></td><td>Código de origem desconhecida pode ser instalado nos servidores e afetar clientes que acessam o site.</td><td><span class="st serious">Média</span></td></tr>
       <tr><td><b>Reputação e obrigações legais</b></td><td>Dependendo do que vazou, pode haver dever de comunicar clientes, parceiros ou autoridades.</td><td><span class="st none">A avaliar</span></td></tr>
     </tbody>
   </table>
 
   <div class="callout good">
     <span class="t">O que funcionou bem</span>
-    O filtro de e-mail e o antivírus barraram a planilha maliciosa, e a conta do Bruce foi desativada no fim da manhã. O problema é que o invasor não dependia só do e-mail: usou contas legítimas, e isso nenhum filtro barra. Por isso a verificação em duas etapas é a medida de maior efeito.
+    O filtro de e-mail e o antivírus barraram a planilha maliciosa; as permissões restritas da conta <i>web_admin</i> impediram que a chave vazada fizesse estragos na nuvem; e a conta do Bruce foi desativada no fim da manhã. O problema é que o invasor usou contas legítimas, e isso nenhum filtro barra. Por isso a verificação em duas etapas é a medida de maior efeito.
   </div>
 </section>
 
-<!-- ======================= 3. COMO ACONTECEU ======================= -->
+<!-- ======================= 4. COMO ACONTECEU ======================= -->
 <section class="page-break">
   <h2><span class="n">4</span>Como o ataque aconteceu</h2>
   <p>Para quem não é da área, ajuda pensar na invasão de um escritório. Cada etapa abaixo tem a comparação e o que de fato aconteceu.</p>
@@ -262,8 +267,8 @@
     </div>
     <div class="step crit">
       <div class="num">ETAPA 3</div>
-      <div class="an">Deixou uma armadilha na sala de reunião</div>
-      <div class="tx">No OneDrive do Bruce, colocou um atalho chamado <i>"fotos do happy hour de aniversário do Bruce"</i>, entre fotos de cerveja, com um link público. Como veio de dentro, <b>não passou por filtro nenhum</b> e chegou a 7 computadores.</div>
+      <div class="an">Deixou uma armadilha, e alguém caiu</div>
+      <div class="tx">Colocou no OneDrive do Bruce um atalho chamado <i>"fotos do happy hour"</i>, com link público. Chegou a 8 computadores e foi aberto em 2. <b>No do Fyodor, o invasor assumiu o controle</b>, virou administrador e criou um usuário escondido.</div>
     </div>
     <div class="step crit">
       <div class="num">ETAPA 4</div>
@@ -282,75 +287,91 @@
     </div>
   </div>
 
-  <h3>Linha do tempo do dia 20/08/2018</h3>
+  <div class="callout">
+    <span class="t">À parte: a porta dos fundos esquecida aberta (nuvem da Amazon)</span>
+    Sem relação com o invasor acima. Para testar algo, um funcionário deixou a pasta com o <b>código do site</b> aberta para qualquer pessoa ler e gravar, e fechou 56 minutos depois. Em <b>um minuto</b>, robôs que varrem a internet acharam a pasta, e um deles <b>trocou o pacote de instalação do site</b> por outro. No mesmo dia, uma chave de acesso vazada tentou criar recursos na conta, mas foi barrada por falta de permissão.
+  </div>
+
+  <h3 class="page-break">Linha do tempo do dia 20/08/2018</h3>
   <figure>
-    <svg width="100%" viewBox="0 0 660 330" role="img" aria-label="Linha do tempo dos incidentes de 20 de agosto de 2018">
-      <!-- eixo: 06:30 (x=210) a 12:30 (x=650) => 440px / 360min => 1.2222 px/min -->
+    <svg width="100%" viewBox="0 0 660 440" role="img" aria-label="Linha do tempo dos incidentes de 20 de agosto de 2018">
+      <!-- eixo: 06:00 (x=210) a 12:30 (x=650) => 1.1282 px/min -->
       <g font-size="8" fill="#6f6e69">
-        <line x1="210" y1="24" x2="210" y2="296" stroke="#e3e2de"/><text x="210" y="312" text-anchor="middle">06:30</text>
-        <line x1="283.3" y1="24" x2="283.3" y2="296" stroke="#e3e2de"/><text x="283.3" y="312" text-anchor="middle">07:30</text>
-        <line x1="356.7" y1="24" x2="356.7" y2="296" stroke="#e3e2de"/><text x="356.7" y="312" text-anchor="middle">08:30</text>
-        <line x1="430" y1="24" x2="430" y2="296" stroke="#e3e2de"/><text x="430" y="312" text-anchor="middle">09:30</text>
-        <line x1="503.3" y1="24" x2="503.3" y2="296" stroke="#e3e2de"/><text x="503.3" y="312" text-anchor="middle">10:30</text>
-        <line x1="576.7" y1="24" x2="576.7" y2="296" stroke="#e3e2de"/><text x="576.7" y="312" text-anchor="middle">11:30</text>
-        <line x1="650" y1="24" x2="650" y2="296" stroke="#e3e2de"/><text x="652" y="312" text-anchor="end">12:30</text>
-        <line x1="210" y1="296" x2="650" y2="296" stroke="#0b0b0b"/>
+        <line x1="210" y1="24" x2="210" y2="410" stroke="#e3e2de"/><text x="210" y="426" text-anchor="middle">06:00</text>
+        <line x1="277.7" y1="24" x2="277.7" y2="410" stroke="#e3e2de"/><text x="277.7" y="426" text-anchor="middle">07:00</text>
+        <line x1="345.4" y1="24" x2="345.4" y2="410" stroke="#e3e2de"/><text x="345.4" y="426" text-anchor="middle">08:00</text>
+        <line x1="413.1" y1="24" x2="413.1" y2="410" stroke="#e3e2de"/><text x="413.1" y="426" text-anchor="middle">09:00</text>
+        <line x1="480.8" y1="24" x2="480.8" y2="410" stroke="#e3e2de"/><text x="480.8" y="426" text-anchor="middle">10:00</text>
+        <line x1="548.5" y1="24" x2="548.5" y2="410" stroke="#e3e2de"/><text x="548.5" y="426" text-anchor="middle">11:00</text>
+        <line x1="616.2" y1="24" x2="616.2" y2="410" stroke="#e3e2de"/><text x="616.2" y="426" text-anchor="middle">12:00</text>
+        <line x1="210" y1="410" x2="650" y2="410" stroke="#0b0b0b"/>
       </g>
       <g font-size="7.5" font-weight="600" fill="#6f6e69" letter-spacing=".6">
         <text x="0" y="16">ATAQUE PRINCIPAL</text>
-        <text x="0" y="270">INCIDENTE PARALELO</text>
+        <text x="0" y="282">NUVEM DA AMAZON (AWS)</text>
+        <text x="0" y="378">INCIDENTE PARALELO</text>
       </g>
+      <g stroke="#e3e2de" stroke-dasharray="3 3"><line x1="0" y1="266" x2="650" y2="266"/><line x1="0" y1="362" x2="650" y2="362"/></g>
       <g font-size="9" fill="#0b0b0b">
-        <!-- linhas: y centro = 34 + i*24 -->
         <text x="0" y="37">Planilha maliciosa (bloqueada)</text>
-        <path d="M240.6 29 l5 5 l-5 5 l-5 -5z" fill="#0f8a3a"/><text x="250" y="37" font-size="8" fill="#3d3c39">06:55</text>
+        <path d="M272.1 29 l5 5 l-5 5 l-5 -5z" fill="#0f8a3a"/><text x="282" y="37" font-size="8" fill="#3d3c39">06:55</text>
 
         <text x="0" y="61">Armadilha no OneDrive + link público</text>
-        <rect x="241.8" y="53" width="4" height="10" rx="1.5" fill="#d03b3b"/><text x="252" y="61" font-size="8" fill="#3d3c39">06:56–06:58</text>
+        <rect x="271.2" y="53" width="4" height="10" rx="1.5" fill="#d03b3b"/><text x="282" y="61" font-size="8" fill="#3d3c39">06:56–06:58</text>
 
-        <text x="0" y="85">Arquivo chega a 7 computadores</text>
-        <rect x="245.4" y="77" width="4" height="10" rx="1.5" fill="#c2410c"/><text x="256" y="85" font-size="8" fill="#3d3c39">06:59–07:01</text>
+        <text x="0" y="85">Arquivo chega a 8 computadores</text>
+        <rect x="274.6" y="77" width="4" height="10" rx="1.5" fill="#c2410c"/><text x="285" y="85" font-size="8" fill="#3d3c39">06:59–07:01</text>
 
-        <text x="0" y="109">Logins a partir de Hong Kong</text>
-        <rect x="304.1" y="101" width="28.1" height="10" rx="2" fill="#8a8984"/><text x="338" y="109" font-size="8" fill="#3d3c39">07:47–08:10</text>
+        <text x="0" y="109">Computador do Fyodor sob controle</text>
+        <rect x="278.8" y="101" width="11.3" height="10" rx="1.5" fill="#d03b3b"/><text x="296" y="109" font-size="8" fill="#3d3c39">07:01–07:11</text>
 
-        <text x="0" y="133">Busca nos e-mails de todos</text>
-        <path d="M305.3 125 l5 5 l-5 5 l-5 -5z" fill="#d03b3b"/><text x="315" y="133" font-size="8" fill="#3d3c39">07:48</text>
+        <text x="0" y="133">Logins a partir de Hong Kong</text>
+        <rect x="330.7" y="125" width="25.9" height="10" rx="2" fill="#8a8984"/><text x="362" y="133" font-size="8" fill="#3d3c39">07:47–08:10</text>
 
-        <text x="0" y="157">Acesso total à caixa da CEO</text>
-        <path d="M332.2 149 l5 5 l-5 5 l-5 -5z" fill="#d03b3b"/><text x="342" y="157" font-size="8" fill="#3d3c39">08:10</text>
+        <text x="0" y="157">Busca nos e-mails de todos</text>
+        <path d="M331.8 149 l5 5 l-5 5 l-5 -5z" fill="#d03b3b"/><text x="342" y="157" font-size="8" fill="#3d3c39">07:48</text>
 
-        <text x="0" y="181">Regra de cópia oculta dos e-mails</text>
-        <path d="M345.7 173 l5 5 l-5 5 l-5 -5z" fill="#d03b3b"/><text x="355" y="181" font-size="8" fill="#3d3c39">08:21</text>
+        <text x="0" y="181">Acesso total à caixa da CEO</text>
+        <path d="M356.7 173 l5 5 l-5 5 l-5 -5z" fill="#d03b3b"/><text x="367" y="181" font-size="8" fill="#3d3c39">08:10</text>
 
-        <text x="0" y="205">Conta do Bruce desativada</text>
-        <path d="M597.4 197 l5 5 l-5 5 l-5 -5z" fill="#0f8a3a"/><text x="590" y="205" font-size="8" fill="#3d3c39" text-anchor="end">11:47</text>
+        <text x="0" y="205">Regra de cópia oculta dos e-mails</text>
+        <path d="M369.1 197 l5 5 l-5 5 l-5 -5z" fill="#d03b3b"/><text x="379" y="205" font-size="8" fill="#3d3c39">08:21</text>
 
-        <text x="0" y="229">E-mail de ameaça à CEO</text>
-        <path d="M631.7 221 l5 5 l-5 5 l-5 -5z" fill="#8a8984"/><text x="623" y="229" font-size="8" fill="#3d3c39" text-anchor="end">12:15</text>
+        <text x="0" y="229">Conta do Bruce desativada</text>
+        <path d="M601.5 221 l5 5 l-5 5 l-5 -5z" fill="#0f8a3a"/><text x="592" y="229" font-size="8" fill="#3d3c39" text-anchor="end">11:47</text>
 
-        <text x="0" y="285">Minerador de criptomoeda</text>
-        <rect x="491.1" y="277" width="61.1" height="10" rx="2" fill="#8a8984"/><text x="558" y="285" font-size="8" fill="#3d3c39">10:20–11:10</text>
+        <text x="0" y="253">E-mail de ameaça à CEO</text>
+        <path d="M633.1 245 l5 5 l-5 5 l-5 -5z" fill="#8a8984"/><text x="624" y="253" font-size="8" fill="#3d3c39" text-anchor="end">12:15</text>
+
+        <text x="0" y="301">Chave vazada tenta agir (barrada)</text>
+        <rect x="228.1" y="293" width="13.5" height="10" rx="1.5" fill="#0f8a3a"/><text x="247" y="301" font-size="8" fill="#3d3c39">06:16–06:28</text>
+
+        <text x="0" y="325">Código do site aberto na internet</text>
+        <rect x="481.9" y="317" width="63.2" height="10" rx="2" fill="#d03b3b"/><text x="551" y="325" font-size="8" fill="#3d3c39">10:01–10:57</text>
+
+        <text x="0" y="349">Pacote do site substituído</text>
+        <path d="M485.3 341 l5 5 l-5 5 l-5 -5z" fill="#d03b3b"/><text x="495" y="349" font-size="8" fill="#3d3c39">10:04</text>
+
+        <text x="0" y="397">Minerador de criptomoeda</text>
+        <rect x="503.3" y="389" width="56.4" height="10" rx="2" fill="#8a8984"/><text x="566" y="397" font-size="8" fill="#3d3c39">10:20–11:10</text>
       </g>
-      <line x1="0" y1="252" x2="650" y2="252" stroke="#e3e2de" stroke-dasharray="3 3"/>
     </svg>
     <figcaption>
-      <span class="st crit">ação grave do invasor</span>&nbsp;&nbsp;
+      <span class="st crit">ação grave</span>&nbsp;&nbsp;
       <span class="st serious">propagação</span>&nbsp;&nbsp;
       <span class="st good">defesa ou contenção</span>&nbsp;&nbsp;
       <span class="st none">contexto</span>
-      <br>Horário de Brasília. Losango = momento pontual; barra = período. As ações mais graves aconteceram em menos de 1h30; a conta do Bruce só foi desativada mais de 4 horas depois.
+      <br>Horário de Brasília. Losango = momento pontual; barra = período. As ações mais graves do ataque principal aconteceram em menos de 1h30; a conta do Bruce só foi desativada mais de 4 horas depois, e a do Fyodor seguia ativa.
     </figcaption>
   </figure>
 </section>
 
-<!-- ======================= 4. NÚMEROS ======================= -->
+<!-- ======================= 5. NÚMEROS ======================= -->
 <section class="page-break">
   <h2><span class="n">5</span>O que o invasor fez, em números</h2>
   <p>Ações registradas na auditoria do Office 365 a partir do endereço principal do invasor (56 registros), agrupadas pelo tipo de comportamento.</p>
   <figure>
     <svg width="100%" viewBox="0 0 660 200" role="img" aria-label="Ações do invasor por tipo">
-      <!-- escala: 18 => 380px ; x0 = 230 -->
       <g font-size="9.2" fill="#0b0b0b">
         <text x="0" y="28">Entrou nas contas</text>
         <rect x="230" y="17" width="380" height="16" rx="3" fill="#2a78d6"/><text x="616" y="29" font-weight="600">18</text>
@@ -368,48 +389,55 @@
       <text x="230" y="195" font-size="7.5" fill="#6f6e69">quantidade de registros</text>
     </svg>
   </figure>
-  <p>O número que mais importa é o <b>menor</b>. As quatro ações sobre e-mails e permissões, somadas à regra de cópia criada a partir de um segundo endereço, são as que mantêm o invasor dentro da empresa mesmo depois da troca de senhas.</p>
+  <p>O número que mais importa é o <b>menor</b>. As quatro ações sobre e-mails e permissões, somadas à regra de cópia criada a partir de um segundo endereço, mantêm o invasor dentro da empresa mesmo depois da troca de senhas.</p>
 
   <table>
-    <thead><tr><th>Indicador</th><th class="nowrap" style="width:22%">Valor</th></tr></thead>
+    <thead><tr><th>Indicador</th><th class="nowrap" style="width:34%">Valor</th></tr></thead>
     <tbody>
       <tr><td>Contas de funcionários comprometidas</td><td><b>2</b> (Bruce Gist e Fyodor Malteskesko)</td></tr>
-      <tr><td>Endereços de internet usados pelo invasor</td><td><b>2</b>, ambos em Hong Kong</td></tr>
-      <tr><td>Computadores que receberam o arquivo malicioso</td><td><b>7</b></td></tr>
+      <tr><td>Computadores que receberam o arquivo malicioso / que o abriram</td><td><b>8</b> / <b>2</b></td></tr>
+      <tr><td>Computadores sob controle do invasor</td><td><b>1</b> (Fyodor), com cerca de 3.800 contatos com o servidor do invasor</td></tr>
       <tr><td>Caixas de e-mail vasculhadas</td><td><b>todas</b></td></tr>
-      <tr><td>Formas de acesso persistente criadas</td><td><b>3</b> (regra de e-mail, acesso total e envio em nome da CEO)</td></tr>
-      <tr><td>Tentativas barradas pelas defesas automáticas</td><td><b>2</b> (filtro de e-mail e antivírus)</td></tr>
+      <tr><td>Formas de acesso persistente criadas</td><td><b>5</b> (regra de e-mail, acesso total e envio como CEO, usuário administrador, tarefa diária)</td></tr>
+      <tr><td>Contas da nuvem com verificação em duas etapas</td><td><b>0 de 4</b></td></tr>
+      <tr><td>Tempo em que o código do site ficou aberto na internet</td><td><b>56 minutos</b> (achado por robôs em 1 minuto)</td></tr>
+      <tr><td>Tentativas barradas pelas defesas existentes</td><td><b>3</b> (filtro de e-mail, antivírus e permissões na nuvem)</td></tr>
     </tbody>
   </table>
 </section>
 
-<!-- ======================= 6/7. PLANO ======================= -->
+<!-- ======================= 6. PLANO ======================= -->
 <section class="page-break">
   <h2><span class="n">6</span>Plano de ação</h2>
-  <p>As ações estão separadas pelo momento em que precisam acontecer. As do primeiro bloco interrompem o vazamento e não devem esperar.</p>
+  <p>As ações estão separadas pelo momento em que precisam acontecer. As do primeiro bloco tiram o invasor da empresa e não devem esperar.</p>
 
   <div class="plan">
     <div class="group now">
-      <h3><span class="st crit">Fazer agora</span> <span class="muted small" style="font-weight:400">interrompem o vazamento e a fraude</span></h3>
+      <h3><span class="st crit">Fazer agora</span> <span class="muted small" style="font-weight:400">tiram o invasor e interrompem o vazamento</span></h3>
+      <div class="check"><div class="box"></div><div><b>Desconectar o computador do Fyodor da rede</b><span>Ele está sob controle do invasor. Desconectar corta o acesso sem apagar as evidências.</span></div></div>
       <div class="check"><div class="box"></div><div><b>Apagar a regra de e-mail "SOX"</b><span>É ela que copia os e-mails para fora. Trocar senhas não a desliga.</span></div></div>
       <div class="check"><div class="box"></div><div><b>Remover os acessos extras à caixa da CEO</b><span>Tirar da conta do Fyodor o acesso total e o direito de enviar e-mails como a CEO.</span></div></div>
-      <div class="check"><div class="box"></div><div><b>Trocar a senha do Fyodor e encerrar as sessões abertas</b><span>Fecha a porta que ainda está aberta. A conta do Bruce já está desativada.</span></div></div>
-      <div class="check"><div class="box"></div><div><b>Bloquear os endereços do invasor</b><span>Os dois endereços de Hong Kong e o e-mail externo que recebia as cópias.</span></div></div>
-      <div class="check"><div class="box"></div><div><b>Avisar a CEO e o financeiro</b><span>Desconfiar de qualquer pedido urgente de pagamento por e-mail, mesmo vindo da CEO, e confirmar por outro canal.</span></div></div>
+      <div class="check"><div class="box"></div><div><b>Trocar a senha do Fyodor e encerrar as sessões abertas</b><span>A conta do Bruce já está desativada.</span></div></div>
+      <div class="check"><div class="box"></div><div><b>Bloquear os endereços do invasor</b><span>Os endereços de Hong Kong, o servidor que controla o computador do Fyodor e o e-mail externo que recebia as cópias.</span></div></div>
+      <div class="check"><div class="box"></div><div><b>Restaurar o pacote original do site e cancelar a chave vazada da nuvem</b><span>Evita que servidores novos instalem o código de terceiros e impede novas tentativas com a chave.</span></div></div>
+      <div class="check"><div class="box"></div><div><b>Avisar a CEO e o financeiro</b><span>Desconfiar de pedidos urgentes de pagamento por e-mail, mesmo vindos da CEO, e confirmar por outro canal.</span></div></div>
     </div>
 
     <div class="group soon">
-      <h3><span class="st warn">Próximos dias</span> <span class="muted small" style="font-weight:400">fecham as portas que o invasor usou</span></h3>
-      <div class="check"><div class="box"></div><div><b>Apagar o arquivo malicioso e desativar o link público</b><span>Evita que mais alguém abra as "fotos de festa".</span></div></div>
-      <div class="check"><div class="box"></div><div><b>Exigir verificação em duas etapas de todos os funcionários</b><span>Com ela, uma senha roubada deixa de ser suficiente para entrar. É a medida de maior efeito.</span></div></div>
-      <div class="check"><div class="box"></div><div><b>Revisar quem precisa ser administrador</b><span>A conta mais perigosa era a com mais poder. Quanto menos administradores, menor o estrago possível.</span></div></div>
-      <div class="check"><div class="box doing"></div><div><b>Concluir a análise dos 7 computadores</b><span>Saber se o invasor também está na rede interna. Em andamento (caso 04).</span></div></div>
+      <h3><span class="st warn">Próximos dias</span> <span class="muted small" style="font-weight:400">fecham as portas que foram usadas</span></h3>
+      <div class="check"><div class="box"></div><div><b>Remover o usuário escondido e a tarefa diária, e reinstalar o computador do Fyodor</b><span>Depois de um invasor ter controle total, a máquina deixa de ser confiável.</span></div></div>
+      <div class="check"><div class="box"></div><div><b>Exigir verificação em duas etapas de todos, no Microsoft 365 e na nuvem da Amazon</b><span>Com ela, uma senha ou chave roubada deixa de ser suficiente. É a medida de maior efeito.</span></div></div>
+      <div class="check"><div class="box"></div><div><b>Bloquear o compartilhamento público de pastas na nuvem</b><span>A Amazon tem uma configuração que impede, na conta inteira, que alguém deixe uma pasta aberta por engano.</span></div></div>
+      <div class="check"><div class="box"></div><div><b>Apagar o arquivo malicioso e desativar o link público</b><span>Inclusive as cópias na pasta de downloads dos computadores.</span></div></div>
+      <div class="check"><div class="box"></div><div><b>Confirmar a situação do computador do Bud e dos servidores do site</b><span>Verificar se algum servidor foi iniciado com o pacote substituído.</span></div></div>
+      <div class="check"><div class="box"></div><div><b>Revisar quem precisa ser administrador</b><span>A conta mais perigosa era a com mais poder.</span></div></div>
     </div>
 
     <div class="group later">
       <h3><span class="st none" style="color:#0a7c96">Melhorias recomendadas</span> <span class="muted small" style="font-weight:400">reduzem a chance de acontecer de novo</span></h3>
-      <div class="check"><div class="box"></div><div><b>Criar alertas para novas regras de e-mail e novas permissões em caixas de e-mail</b><span>Detectar a próxima tentativa em minutos, e não em horas.</span></div></div>
-      <div class="check"><div class="box"></div><div><b>Descobrir como as senhas vazaram</b><span>Reuso de senha, golpe anterior ou outro caminho. Sem isso, o problema pode se repetir com outras contas.</span></div></div>
+      <div class="check"><div class="box"></div><div><b>Criar alertas automáticos</b><span>Para novas regras de e-mail, novas permissões em caixas de e-mail, comandos ocultos nos computadores e pastas da nuvem abertas ao público.</span></div></div>
+      <div class="check"><div class="box"></div><div><b>Descobrir como as senhas e a chave vazaram</b><span>Sem isso, o problema pode se repetir com outras contas.</span></div></div>
+      <div class="check"><div class="box"></div><div><b>Investigar a máquina interna que o invasor contatou</b><span>Pode indicar que ele tentou avançar para outros sistemas.</span></div></div>
       <div class="check"><div class="box"></div><div><b>Avaliar com o jurídico a necessidade de comunicar terceiros</b><span>Depende do conteúdo dos e-mails expostos.</span></div></div>
     </div>
   </div>
@@ -422,29 +450,31 @@
   <table>
     <thead><tr><th class="nowrap">#</th><th style="width:28%">Caso</th><th>Em uma frase</th><th class="nowrap">Gravidade</th><th class="nowrap">Status</th></tr></thead>
     <tbody>
-      <tr><td>01</td><td><b>Minerador de criptomoeda</b></td><td>Um fórum externo usou o processador de notebooks para minerar criptomoeda. Sem roubo de dados.</td><td><span class="st warn">Média</span></td><td><span class="st good">Encerrado</span></td></tr>
+      <tr><td>01</td><td><b>Minerador de criptomoeda</b></td><td>Um fórum externo usou o processador de notebooks para minerar criptomoeda. Sem roubo de dados.</td><td><span class="st warn">Média</span></td><td><span class="st good">Concluído</span></td></tr>
       <tr><td>02</td><td><b>Phishing e contas comprometidas</b></td><td>A planilha maliciosa foi barrada, mas revelou que o invasor já tinha as senhas de duas contas.</td><td><span class="st crit">Alta</span></td><td><span class="st good">Concluído</span></td></tr>
       <tr><td>03</td><td><b>O que o invasor fez no Office 365</b></td><td>Armadilha no OneDrive, busca nos e-mails de todos e regra de cópia oculta para fora.</td><td><span class="st crit">Crítica</span></td><td><span class="st good">Concluído</span></td></tr>
-      <tr><td>04</td><td><b>O arquivo nos 7 computadores</b></td><td>Alguém abriu o atalho? O invasor chegou à rede interna?</td><td><span class="st none">—</span></td><td><span class="st warn">Próximo</span></td></tr>
-      <tr><td>05</td><td><b>Nuvem da Amazon (AWS)</b></td><td>Configurações da infraestrutura em nuvem, independentes deste ataque.</td><td><span class="st none">—</span></td><td><span class="st none">Planejado</span></td></tr>
+      <tr><td>04</td><td><b>O arquivo nos computadores</b></td><td>Aberto em 2 de 8 máquinas; o computador do Fyodor ficou sob controle do invasor.</td><td><span class="st crit">Crítica</span></td><td><span class="st good">Concluído</span></td></tr>
+      <tr><td>05</td><td><b>Nuvem da Amazon (AWS)</b></td><td>Nenhuma conta com verificação em duas etapas e o código do site aberto por 56 minutos.</td><td><span class="st crit">Alta</span></td><td><span class="st good">Concluído</span></td></tr>
     </tbody>
   </table>
 
-  <h3>O que vem a seguir</h3>
+  <h3>Pontos em aberto</h3>
   <ul class="clean">
-    <li><b>Caso 04, computadores:</b> verificar nos 7 notebooks se o atalho foi apenas sincronizado pelo OneDrive ou se alguém o abriu. O notebook do Bud Stoll teve uma segunda atividade às 08:28 e é o primeiro a ser examinado. Se houve execução, o passo seguinte é descobrir o que o invasor fez dentro da rede.</li>
-    <li><b>Caso 05, AWS:</b> auditoria da conta de nuvem: quem acessou, com ou sem verificação em duas etapas, e se algum dado ficou exposto publicamente.</li>
+    <li><b>Como as senhas e a chave da nuvem vazaram.</b> Os registros mostram o uso, não a origem.</li>
+    <li><b>O conteúdo do pacote do site substituído.</b> Precisa ser analisado em ambiente isolado.</li>
+    <li><b>O que o invasor fez com o computador do Fyodor depois das 07:11</b>, incluindo o contato com uma máquina interna.</li>
+    <li><b>O computador do Bud:</b> o arquivo foi aberto, mas não há sinal de controle. Confirmar pelos registros do firewall.</li>
   </ul>
-  <p class="muted small">Este relatório é atualizado ao final de cada caso, com a situação e o plano de ação revisados.</p>
 
   <h3>Indicadores do ataque (para a equipe técnica)</h3>
   <table class="small">
     <tbody>
-      <tr><td style="width:34%"><b>Endereços do invasor</b></td><td>104.207.83.63 · 199.66.91.253 (Hong Kong)</td></tr>
+      <tr><td style="width:30%"><b>Endereços do invasor</b></td><td>104.207.83.63 · 199.66.91.253 (Hong Kong) · 45.77.53.176 (servidor de comando)</td></tr>
       <tr><td><b>E-mail externo</b></td><td>hyunki1984@naver.com</td></tr>
       <tr><td><b>Arquivos maliciosos</b></td><td>Frothly-Brewery-Financial-Planning-FY2019-Draft.xlsm · BRUCE BIRTHDAY HAPPY HOUR PICS.lnk</td></tr>
-      <tr><td><b>Regra de e-mail</b></td><td>SOX (cópia oculta para o e-mail externo)</td></tr>
+      <tr><td><b>Persistência</b></td><td>Regra de e-mail "SOX" · usuário local svcvnc · tarefa agendada "Updater"</td></tr>
       <tr><td><b>Contas comprometidas</b></td><td>bgist@froth.ly · fyodor@froth.ly</td></tr>
+      <tr><td><b>Nuvem (AWS)</b></td><td>Chave do web_admin usada de 35.153.154.221 e 139.198.18.205 · uploads anônimos de 52.66.146.128 e 35.182.246.222 no bucket frothlywebcode</td></tr>
     </tbody>
   </table>
 </section>
@@ -459,8 +489,12 @@
       <tr><td>Conta comprometida</td><td>Conta de funcionário que está sendo usada por outra pessoa.</td></tr>
       <tr><td>Verificação em duas etapas</td><td>Além da senha, um código no celular. Sem ele, a senha roubada não basta. Também chamada de MFA.</td></tr>
       <tr><td>Persistência</td><td>Qualquer truque para o invasor continuar com acesso depois de ser descoberto.</td></tr>
+      <tr><td>Escalada de privilégio</td><td>Quando o invasor passa de usuário comum para administrador da máquina.</td></tr>
+      <tr><td>Servidor de comando</td><td>Computador do invasor que dá ordens às máquinas infectadas pela internet. Também chamado de C2.</td></tr>
       <tr><td>Regra de transporte</td><td>Regra no servidor de e-mail que copia ou redireciona mensagens automaticamente.</td></tr>
       <tr><td>Atalho (.lnk)</td><td>Arquivo de atalho do Windows. Parece inofensivo, mas pode executar comandos ao ser aberto.</td></tr>
+      <tr><td>Bucket</td><td>Pasta de arquivos na nuvem da Amazon (serviço S3).</td></tr>
+      <tr><td>Chave de acesso</td><td>"Senha" usada por programas para entrar na nuvem. Quem a tem age como o dono.</td></tr>
       <tr><td>Indicador (IOC)</td><td>Pista concreta do ataque: endereço de internet, nome de arquivo, e-mail do invasor.</td></tr>
       <tr><td>SOC</td><td>Equipe que monitora a segurança da empresa e responde a incidentes.</td></tr>
       <tr><td>Contenção</td><td>Ações para parar o estrago enquanto a investigação continua.</td></tr>
@@ -469,7 +503,7 @@
 </section>
 
 <!-- ======================= 9. SOBRE ======================= -->
-<section>
+<section class="page-break">
   <h2><span class="n">9</span>Sobre este documento</h2>
   <table>
     <tbody>
@@ -485,6 +519,7 @@
     <thead><tr><th style="width:12%">Versão</th><th style="width:20%">Data</th><th>Alteração</th></tr></thead>
     <tbody>
       <tr><td>1.0</td><td>24/11/2026</td><td>Primeira versão: casos 01, 02 e 03.</td></tr>
+      <tr><td>1.1</td><td>24/11/2026</td><td>Casos 04 (computador do Fyodor sob controle do invasor) e 05 (nuvem da Amazon). Situação, impacto, linha do tempo e plano de ação revisados. Investigação concluída.</td></tr>
     </tbody>
   </table>
 </section>

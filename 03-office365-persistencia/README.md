@@ -58,7 +58,7 @@ analista@soc:~$ cat incidente.txt
 | 06:57:17 | bgist | 104.207.83.63 | Sobe `stout-2.jpg`, `morebeer.jpg`, `stout.png` (disfarce) |
 | **06:57:33** | bgist | 104.207.83.63 | 🟠 **Sobe `BRUCE BIRTHDAY HAPPY HOUR PICS.lnk`** |
 | **06:58:02** | bgist | 104.207.83.63 | 🟠 **`AnonymousLinkCreated`**: link público para a pasta |
-| 06:59:18 – 07:01:38 | — | — | O `.lnk` aparece em 7 laptops (escopo do caso 04) |
+| 06:59:18 – 07:01:38 | — | — | O `.lnk` aparece em 8 laptops ([caso 04](../04-endpoint-empire/)) |
 | **07:48:28** | fyodor | 104.207.83.63 | 🔴 **`New-MailboxSearch`** em todas as caixas |
 | 07:48:32 | fyodor | 104.207.83.63 | `Start-MailboxSearch` |
 | 08:09:59 | fyodor | 104.207.83.63 | 🔴 `Add-RecipientPermission`: **SendAs** na caixa da CEO |
@@ -177,9 +177,10 @@ index=botsv3 BIRTHDAY HAPPY
 | BSTOLL-L | 06:59:41 **e de novo às 08:28** | Sysmon + WinEventLog |
 | BGIST-L | 07:00:06 | Sysmon + WinEventLog |
 | FYODOR-L | 07:01:33 | Sysmon |
+| MKRAEUS-L | — | Sysmon (encontrada no caso 04: esta tabela foi cortada em 100 linhas) |
 | SEPM (antivírus) | 08:39:51 | symantec:ep |
 
-Sete laptops em três minutos é rápido demais para sete pessoas clicarem: o mais provável é a **sincronização do OneDrive**. Mas "o arquivo chegou" não é o mesmo que "alguém executou". Isso é o escopo do **caso 04**.
+Vários laptops em três minutos é rápido demais para tantas pessoas clicarem: o mais provável era a **sincronização do OneDrive**. Mas "o arquivo chegou" não é o mesmo que "alguém executou". Isso foi o escopo do **[caso 04](../04-endpoint-empire/)**, que contou 8 máquinas e encontrou execução em duas.
 
 </details>
 
@@ -253,7 +254,7 @@ index=botsv3 sourcetype=ms:o365:management Operation=*TransportRule*
 
 **O que aconteceu:** com as contas roubadas, o atacante fez quatro coisas no Office 365:
 
-1. **Isca:** colocou um atalho malicioso (`.lnk`) no OneDrive do Bruce, disfarçado de fotos de festa, e criou um link público. O arquivo chegou a sete laptops.
+1. **Isca:** colocou um atalho malicioso (`.lnk`) no OneDrive do Bruce, disfarçado de fotos de festa, e criou um link público. O arquivo chegou a oito laptops.
 2. **Coleta:** com a conta de admin do Fyodor, buscou em todas as caixas de e-mail por termos financeiros e confidenciais.
 3. **Persistência:** criou uma regra de transporte que copia e-mails para `hyunki1984@naver.com`. **Ela continua funcionando mesmo depois da troca das senhas.**
 4. **Privilégio:** deu à conta do Fyodor permissão para ler e enviar e-mails como a CEO.
@@ -292,7 +293,7 @@ Em ordem de urgência:
 - [ ] **Apagar o `.lnk` e revogar o link público** do OneDrive
 - [ ] **Avisar a CEO:** os e-mails dela podem ter sido lidos, e alguém pode ter enviado mensagens em nome dela
 - [ ] **Criar alerta** para novas regras de transporte e novas permissões de caixa de e-mail
-- [ ] **Investigar os 7 laptops** que receberam o `.lnk`: caso 04
+- [ ] **Investigar os 8 laptops** que receberam o `.lnk`: [caso 04](../04-endpoint-empire/)
 
 ---
 
