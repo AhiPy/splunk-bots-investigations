@@ -11,7 +11,7 @@
 
 <br>
 
-![Casos](https://img.shields.io/badge/casos%20resolvidos-2%20de%205-ff7a1a?style=flat-square&labelColor=0d1117)
+![Casos](https://img.shields.io/badge/casos%20resolvidos-3%20de%205-ff7a1a?style=flat-square&labelColor=0d1117)
 ![Eventos](https://img.shields.io/badge/eventos-2.083.056-00e5ff?style=flat-square&labelColor=0d1117)
 ![Fontes](https://img.shields.io/badge/sourcetypes-102-00e5ff?style=flat-square&labelColor=0d1117)
 
@@ -28,7 +28,7 @@ analista@soc:~$ cat caso.txt
 > DATASET ...... Splunk BOTS v3 · 2 milhões de eventos · 102 fontes
 > PAPEL ........ Analista de SOC N1 de plantão
 > MISSÃO ....... descobrir o que aconteceu, onde, com quem e quando, e documentar
-> STATUS ....... █████████░░░░░░░░░░░░░ 2 de 5 casos resolvidos
+> STATUS ....... █████████████░░░░░░░░░ 3 de 5 casos resolvidos
 ```
 
 ## `$ whoami`
@@ -52,8 +52,8 @@ O BOTS v3 é um ambiente só, com vários incidentes acontecendo no mesmo dia (2
 | :-: | :-- | :-- | :-- | :-: |
 | 01 | **[Cryptojacking via Coinhive em fórum externo](01-cryptojacking-coinhive/)**<br><sub>Uma anomalia de volume de logs leva a um minerador de Monero rodando no navegador de 3 notebooks</sub> | Perfmon · DNS · HTTP · syslog · Symantec | T1189 · T1496 | ![resolvido](https://img.shields.io/badge/-resolvido-2bd576?style=flat-square) |
 | 02 | **[Phishing com macro e contas comprometidas](02-phishing-contas-comprometidas/)**<br><sub>O phishing do APT foi barrado, mas veio de dentro: o mesmo IP de Hong Kong tinha login válido em duas contas da empresa</sub> | SMTP · Office 365 · Sysmon · antivírus · Azure AD | T1566.001 · T1078.004 | ![resolvido](https://img.shields.io/badge/-resolvido-2bd576?style=flat-square) |
-| 03 | O que o atacante fez dentro das contas (Office 365) | — | — | ![próximo](https://img.shields.io/badge/-pr%C3%B3ximo-ff7a1a?style=flat-square) |
-| 04 | Atividade do APT nos endpoints Windows | — | — | ![planejada](https://img.shields.io/badge/-planejada-6e7a8c?style=flat-square) |
+| 03 | **[O que o atacante fez dentro do Office 365](03-office365-persistencia/)**<br><sub>Uma isca no OneDrive, uma busca em todos os e-mails e uma regra que continuava copiando e-mails para fora mesmo depois da troca de senha</sub> | Auditoria do Office 365 | T1080 · T1114 · T1098 | ![resolvido](https://img.shields.io/badge/-resolvido-2bd576?style=flat-square) |
+| 04 | O atalho `.lnk` nos 7 laptops: alguém executou? | — | — | ![próximo](https://img.shields.io/badge/-pr%C3%B3ximo-ff7a1a?style=flat-square) |
 | 05 | Auditoria da conta AWS (CloudTrail) | — | — | ![planejada](https://img.shields.io/badge/-planejada-6e7a8c?style=flat-square) |
 
 ## `$ ./investigar --metodo`

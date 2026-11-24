@@ -1,0 +1,43 @@
+```Investigação 03: O que o atacante fez dentro do Office 365 (Splunk BOTS v3)```
+```Cada bloco pode ser colado direto na busca do Splunk, com o seletor de tempo em All time.```
+```Comentários entre três crases são ignorados pelo SPL.```
+
+
+```=== Passo 1: ações do atacante no Office 365 (depois clicar em Operation na barra lateral) ===```
+index=botsv3 sourcetype=ms:o365:management 104.207.83.63
+
+
+```=== Passo 2: todas as ações, não só o top 10 ===```
+index=botsv3 sourcetype=ms:o365:management 104.207.83.63
+| stats count by Operation
+
+
+```=== Passo 3: timeline das ações, sem os logins ===```
+index=botsv3 sourcetype=ms:o365:management 104.207.83.63 Operation!=UserLoggedIn    ```!= quer dizer "diferente de"```
+| table _time UserId Operation
+| sort _time
+
+
+```=== Passo 4: arquivos enviados pelo atacante ===```
+index=botsv3 sourcetype=ms:o365:management 104.207.83.63 Operation=FileUploaded
+| table _time Operation SourceFileName
+
+
+```=== Passo 5: onde o .lnk apareceu (palavras soltas, não o nome exato) ===```
+index=botsv3 BIRTHDAY HAPPY
+| table _time host sourcetype
+
+
+```=== Passo 6: ações de caixa de e-mail e permissão da conta do Fyodor ===```
+index=botsv3 sourcetype=ms:o365:management UserId=fyodor@froth.ly (Operation=*Mailbox* OR Operation=*Permission*)
+
+
+```=== Passo 7: uma linha por ação, com origem e parâmetros ===```
+index=botsv3 sourcetype=ms:o365:management UserId=fyodor@froth.ly (Operation=*Mailbox* OR Operation=*Permission*)
+| table _time ClientIP Operation Parameters{}.Name Parameters{}.Value
+| sort _time
+
+
+```=== Passo 8: regras de transporte, de qualquer IP ===```
+index=botsv3 sourcetype=ms:o365:management Operation=*TransportRule*    ```sem filtro de IP de propósito```
+| table _time ClientIP UserId Operation Parameters{}.Name Parameters{}.Value
