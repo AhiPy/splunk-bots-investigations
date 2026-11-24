@@ -1,0 +1,59 @@
+```Investigação 05: Auditoria da AWS, o bucket que ficou público (Splunk BOTS v3)```
+```Cada bloco pode ser colado direto na busca do Splunk, com o seletor de tempo em All time.```
+```Comentários entre três crases são ignorados pelo SPL.```
+
+
+```=== Passo 1: quem usa a conta AWS (depois clicar em userIdentity.userName) ===```
+index=botsv3 sourcetype=aws:cloudtrail
+
+
+```=== Passo 2: quem usa MFA ===```
+index=botsv3 sourcetype=aws:cloudtrail
+| stats count by userIdentity.userName userIdentity.sessionContext.attributes.mfaAuthenticated
+
+
+```=== Passo 3: tipos de ação das pessoas, das mais raras para as mais comuns ===```
+index=botsv3 sourcetype=aws:cloudtrail userIdentity.userName!=splunk_access
+| stats count by eventName
+| sort count    ```sem o "-": do menor para o maior```
+
+
+```=== Passo 4: só as ações de mudança, em ordem ===```
+index=botsv3 sourcetype=aws:cloudtrail userIdentity.userName!=splunk_access (eventName=Put* OR eventName=Create* OR eventName=Delete* OR eventName=Authorize* OR eventName=Attach* OR eventName=Update* OR eventName=Modify*)
+| table _time userIdentity.userName eventName sourceIPAddress
+| sort _time
+
+
+```=== Passo 5: o que funcionou (errorCode vazio = sucesso) ===```
+index=botsv3 sourcetype=aws:cloudtrail userIdentity.userName!=splunk_access (eventName=Put* OR eventName=Create* OR eventName=Delete* OR eventName=Authorize* OR eventName=Attach* OR eventName=Update* OR eventName=Modify*)
+| table _time userIdentity.userName eventName sourceIPAddress errorCode
+| sort _time
+
+
+```=== Passo 6: o que mudou no bucket (AllUsers = qualquer pessoa na internet) ===```
+index=botsv3 sourcetype=aws:cloudtrail eventName=PutBucketAcl
+| table _time requestParameters.bucketName requestParameters.AccessControlPolicy.AccessControlList.Grant{}.Grantee.URI requestParameters.AccessControlPolicy.AccessControlList.Grant{}.Permission
+
+
+```=== Passo 7: quais logs registraram o bucket durante a exposição ===```
+index=botsv3 frothlywebcode earliest="08/20/2018:10:01:00" latest="08/20/2018:10:58:00"
+| stats count by sourcetype
+
+
+```=== Passo 8: os acessos crus (texto corrido, sem campos extraídos) ===```
+index=botsv3 sourcetype=aws:s3:accesslogs frothlywebcode earliest="08/20/2018:10:01:00" latest="08/20/2018:10:58:00"
+
+
+```=== Passo 9: gravações de arquivo durante a exposição ===```
+index=botsv3 sourcetype=aws:s3:accesslogs frothlywebcode REST.PUT.OBJECT earliest="08/20/2018:10:01:00" latest="08/20/2018:10:58:00"
+
+
+```=== Passo 10: onde o pacote aparece ===```
+index=botsv3 frothly_html_memcached
+| stats count by sourcetype host
+
+
+```=== Passo 11: o que os servidores registraram sobre o pacote ===```
+index=botsv3 frothly_html_memcached (sourcetype=bash_history OR sourcetype=cloud-init-output)
+| table _time host sourcetype _raw
+| sort _time

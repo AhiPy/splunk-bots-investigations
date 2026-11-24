@@ -1,0 +1,40 @@
+```Investigação 04: O atalho nos computadores, alguém abriu? (Splunk BOTS v3)```
+```Cada bloco pode ser colado direto na busca do Splunk, com o seletor de tempo em All time.```
+```Comentários entre três crases são ignorados pelo SPL.```
+
+
+```=== Passo 1: chegou ou rodou? (Sysmon: EventCode 11 = arquivo criado, 1 = processo criado) ===```
+index=botsv3 BIRTHDAY HAPPY sourcetype=XmlWinEventLog
+| stats count by host EventCode
+
+
+```=== Passo 2: as execuções ligadas ao atalho (eram downloads pelo Edge) ===```
+index=botsv3 BIRTHDAY HAPPY sourcetype=XmlWinEventLog EventCode=1
+| table _time host User ParentImage Image CommandLine
+
+
+```=== Passo 3: tudo o que rodou no FYODOR-L nos 14 minutos após o download ===```
+index=botsv3 host=FYODOR-L sourcetype=XmlWinEventLog EventCode=1 earliest="08/20/2018:07:01:00" latest="08/20/2018:07:15:00"
+| table _time ParentImage Image CommandLine
+| sort _time
+
+
+```=== Passo 4: com quem o PowerShell do FYODOR-L conversou (EventCode 3 = conexão de rede) ===```
+index=botsv3 host=FYODOR-L sourcetype=XmlWinEventLog EventCode=3 Image=*powershell.exe
+| stats count by DestinationIp DestinationPort
+
+
+```=== Passo 5: o stager rodou no BSTOLL-L? ===```
+index=botsv3 host=BSTOLL-L sourcetype=XmlWinEventLog EventCode=1 Image=*powershell.exe
+| table _time ParentImage CommandLine
+| sort _time
+
+
+```=== Passo 6: o BSTOLL-L falou com o C2? (voltou 0) ===```
+index=botsv3 host=BSTOLL-L sourcetype=XmlWinEventLog EventCode=3 Image=*powershell.exe
+| stats count by DestinationIp DestinationPort
+
+
+```=== Passo 7: o BSTOLL-L registra conexões de rede? (para o zero valer) ===```
+index=botsv3 host=BSTOLL-L sourcetype=XmlWinEventLog EventCode=3
+| stats count by Image
