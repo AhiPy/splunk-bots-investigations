@@ -84,7 +84,7 @@ flowchart LR
 | 06:55:52 | BGIST-L | Sysmon (ID 11) | O app de e-mail do Windows (`HxTsr.exe`) grava `...FY2019-Draft[66].xlsm` no disco do Bruce |
 | 06:56:39 | BGIST-L | WinEventLog (antivírus) | 🟢 **`W97M.Empstage`** detectado e o arquivo é **apagado** (*Cleaned by Deletion*) |
 | **07:47 – 08:10** | Hong Kong | ms:aad:signin | 🔴 **Logins com sucesso, sem MFA**, nas contas `bgist` (14) e `fyodor` (13) a partir de `104.207.83.63` |
-| 07:47 – 08:10 | Hong Kong | ms:o365:management | Ações dentro do Office 365 a partir do mesmo IP (escopo do [caso 03](../README.md)) |
+| 07:47 – 08:10 | Hong Kong | ms:o365:management | Ações dentro do Office 365 a partir do mesmo IP (investigado no [caso 03](../03-office365-persistencia/)) |
 | 12:15 | externo | stream:smtp | `hyunki1984@naver.com` manda à CEO o e-mail *"All your datas belong to us"* |
 | 12:19 | Grace Hoppy | stream:smtp | A CEO encaminha esse e-mail para Bud Stoll, Billy Tun e Jeremiah Wortoski |
 
@@ -394,7 +394,7 @@ deviceInformation: ;Windows 7;IE 10.0;
 - [ ] **Redefinir as senhas** de `bgist@froth.ly` e `fyodor@froth.ly` e **encerrar as sessões ativas**
 - [ ] **Exigir MFA** em todas as contas do Office 365: nesses logins, `mfaRequired: false`
 - [ ] **Bloquear** `104.207.83.63` e alertar para logins de países fora do padrão da empresa
-- [ ] **Investigar o que foi feito** nas duas contas entre 07:47 e 08:10 (`ms:o365:management`): é o caso 03
+- [ ] **Investigar o que foi feito** nas duas contas entre 07:47 e 08:10 (`ms:o365:management`): é o [caso 03](../03-office365-persistencia/)
 - [ ] **Descobrir como as senhas vazaram** (reuso de senha, phishing anterior, outro vetor)
 - [ ] **Avisar os 4 destinatários** para não pedirem a liberação do e-mail em quarentena
 - [ ] **Confirmar o papel** do destinatário `ubuntu@ec2-52-38-112-145.us-west-2.compute.amazonaws.com`
