@@ -37,6 +37,9 @@ Este repositório simula o trabalho de um **Analista de SOC N1**: partir de uma 
 
 Cada passo explica **por que** foi dado e **como se liga ao anterior**. O objetivo é mostrar o raciocínio, não só as queries. Quando uma busca deu errado, deixei registrado também: errar o nome de um campo e entender por quê faz parte do trabalho.
 
+> [!TIP]
+> **Versão para gestão:** o [Relatório de Incidentes](RELATORIO.md) resume os casos sem jargão técnico, com a situação atual, o impacto para o negócio, gráficos e as ações recomendadas em ordem de prioridade. É atualizado a cada caso concluído.
+
 ## `$ cat historia.txt`
 
 O BOTS v3 é um ambiente só, com vários incidentes acontecendo no mesmo dia (20/08/2018):
