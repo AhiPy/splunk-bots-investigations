@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Relatório de Incidentes · Frothly</title>
+<style>
+  @page {
+    size: A4;
+    margin: 18mm 17mm 20mm 17mm;
+    @bottom-left { content: "Relatório de Incidentes · Frothly · v1.0"; font: 400 7.5pt Inter, sans-serif; color: #8a8984; }
+    @bottom-right { content: "página " counter(page); font: 400 7.5pt Inter, sans-serif; color: #8a8984; }
+  }
+  @page :first {
+    margin: 0;
+    @bottom-left { content: none; }
+    @bottom-right { content: none; }
+  }
+
+  :root {
+    --ink: #0b0b0b;
+    --ink-2: #3d3c39;
+    --muted: #6f6e69;
+    --line: #e3e2de;
+    --soft: #f5f4f1;
+    --accent: #0a7c96;
+    --navy: #0d1117;
+    --critical: #d03b3b;
+    --serious: #c2410c;
+    --warning: #b7791f;
+    --good: #0f8a3a;
+    --blue: #2a78d6;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: Inter, "DejaVu Sans", sans-serif;
+    font-size: 10pt;
+    line-height: 1.5;
+    color: var(--ink);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    font-feature-settings: "tnum" 1, "cv11" 1;
+  }
+
+  /* ---------- Capa ---------- */
+  .cover {
+    width: 210mm; height: 297mm;
+    background: var(--navy);
+    color: #e6e9ee;
+    padding: 26mm 22mm 20mm 22mm;
+    display: flex; flex-direction: column;
+    page-break-after: always;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover .tag { font-family: "DejaVu Sans Mono", monospace; font-size: 9pt; letter-spacing: .08em; color: #00e5ff; }
+  .cover h1 { font-size: 34pt; line-height: 1.08; margin: 10mm 0 4mm; font-weight: 700; letter-spacing: -.01em; color: #fff; }
+  .cover .sub { font-size: 13pt; color: #aeb6c2; max-width: 150mm; }
+  .cover .bar { width: 22mm; height: 3px; background: #ff7a1a; margin: 9mm 0; }
+  .cover .meta { margin-top: auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 6mm 10mm; font-size: 9pt; }
+  .cover .meta div span { display: block; color: #7d8794; font-size: 7.5pt; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 1mm; }
+  .cover .status {
+    margin-top: 14mm; border: 1px solid #2b333f; border-radius: 6px; padding: 5mm 6mm;
+    display: flex; gap: 8mm; align-items: center; font-size: 9.5pt;
+  }
+  .cover .status b { color: #fff; }
+  .pill { display: inline-block; padding: .6mm 2.6mm; border-radius: 99px; font-size: 7.5pt; font-weight: 600; letter-spacing: .03em; }
+  .cover .pill.crit { background: rgba(208,59,59,.18); color: #ff8a8a; border: 1px solid rgba(208,59,59,.6); }
+  .cover .note { margin-top: 8mm; font-size: 7.5pt; color: #7d8794; max-width: 160mm; }
+  .cover svg.wave { display: block; margin: 6mm 0 0; opacity: .95; }
+
+  /* ---------- Corpo ---------- */
+  h2 {
+    font-size: 15pt; margin: 0 0 3mm; padding-top: 1mm; font-weight: 700; letter-spacing: -.005em;
+    break-after: avoid;
+  }
+  h2 .n { color: var(--accent); margin-right: 2mm; font-variant-numeric: tabular-nums; }
+  h3 { font-size: 10.5pt; margin: 5mm 0 2mm; break-after: avoid; }
+  p { margin: 0 0 2.6mm; }
+  .lead { font-size: 12pt; line-height: 1.45; font-weight: 600; margin-bottom: 4mm; }
+  .muted { color: var(--muted); }
+  section { margin-bottom: 9mm; }
+  .page-break { break-before: page; }
+  ul.clean { margin: 0 0 3mm; padding-left: 5mm; }
+  ul.clean li { margin-bottom: 1.4mm; }
+
+  .callout { border-left: 3px solid var(--accent); background: var(--soft); padding: 3.5mm 5mm; border-radius: 0 4px 4px 0; margin: 4mm 0; break-inside: avoid; }
+  .callout.crit { border-color: var(--critical); background: #fbf1f0; }
+  .callout.good { border-color: var(--good); background: #eff7f1; }
+  .callout .t { font-weight: 700; display: block; margin-bottom: 1mm; }
+
+  /* KPIs */
+  .kpis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3mm; margin: 5mm 0 2mm; }
+  .kpi { border: 1px solid var(--line); border-radius: 6px; padding: 3.5mm 3.5mm 3mm; break-inside: avoid; }
+  .kpi .v { font-size: 20pt; font-weight: 700; line-height: 1; }
+  .kpi .l { font-size: 7.8pt; color: var(--muted); margin-top: 1.8mm; line-height: 1.3; }
+  .kpi.crit .v { color: var(--critical); }
+  .kpi.good .v { color: var(--good); }
+
+  /* Tabelas */
+  table { width: 100%; border-collapse: collapse; font-size: 9pt; margin: 2mm 0 3mm; }
+  th { text-align: left; font-size: 7.5pt; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; padding: 2mm 2.5mm; border-bottom: 1.5px solid var(--ink); }
+  td { padding: 2.4mm 2.5mm; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr { break-inside: avoid; }
+  td.nowrap, th.nowrap { white-space: nowrap; }
+
+  .st { display: inline-flex; align-items: center; gap: 1.5mm; font-weight: 600; font-size: 8.3pt; white-space: nowrap; }
+  .st::before { content: ""; width: 2.4mm; height: 2.4mm; border-radius: 50%; background: currentColor; }
+  .st.crit { color: var(--critical); }
+  .st.serious { color: var(--serious); }
+  .st.warn { color: var(--warning); }
+  .st.good { color: var(--good); }
+  .st.none { color: var(--muted); }
+
+  /* Fluxo do ataque */
+  .flow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3mm; margin: 4mm 0; }
+  .step { border: 1px solid var(--line); border-radius: 6px; padding: 3.5mm 4mm; break-inside: avoid; position: relative; }
+  .step .num { font-size: 7.5pt; font-weight: 700; color: var(--accent); letter-spacing: .06em; }
+  .step .an { font-weight: 700; font-size: 10pt; margin: 1mm 0 1.2mm; }
+  .step .tx { font-size: 8.3pt; color: var(--ink-2); line-height: 1.45; }
+  .step.crit { border-color: #e9b4b1; background: #fdf6f5; }
+  .step.crit .num { color: var(--critical); }
+  .step.good { border-color: #b9dcc4; background: #f4faf5; }
+  .step.good .num { color: var(--good); }
+
+  /* Gráficos */
+  figure { margin: 4mm 0 2mm; break-inside: avoid; }
+  figcaption { font-size: 8pt; color: var(--muted); margin-top: 1.5mm; }
+  svg text { font-family: Inter, sans-serif; }
+
+  /* Plano de ação */
+  .plan { display: grid; grid-template-columns: 1fr; gap: 3mm; }
+  .group { border: 1px solid var(--line); border-radius: 6px; padding: 3.5mm 5mm 2mm; break-inside: avoid; }
+  .group h3 { margin: 0 0 2mm; display: flex; align-items: center; gap: 2.5mm; }
+  .group.now { border-top: 3px solid var(--critical); }
+  .group.soon { border-top: 3px solid var(--warning); }
+  .group.later { border-top: 3px solid var(--accent); }
+  .check { display: grid; grid-template-columns: 5mm 1fr; gap: 1mm 2mm; padding: 1.8mm 0; border-bottom: 1px dashed var(--line); break-inside: avoid; }
+  .check:last-child { border-bottom: 0; }
+  .box { width: 3.4mm; height: 3.4mm; border: 1.3px solid var(--ink-2); border-radius: 1px; margin-top: .8mm; }
+  .box.doing { border-color: var(--warning); background: linear-gradient(135deg, transparent 45%, var(--warning) 45%, var(--warning) 55%, transparent 55%); }
+  .check b { display: block; font-size: 9.3pt; }
+  .check span { font-size: 8.5pt; color: var(--ink-2); }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 6mm; }
+  .gloss td:first-child { font-weight: 600; white-space: nowrap; width: 38mm; }
+  .small { font-size: 8.3pt; }
+</style>
+</head>
+<body>
+
+<!-- ======================= CAPA ======================= -->
+<div class="cover">
+  <div class="tag">SEGURANÇA DA INFORMAÇÃO · SOC</div>
+  <h1>Relatório de<br>Incidentes</h1>
+  <div class="sub">Invasão da Frothly por um grupo organizado: o que aconteceu, o que isso significa para a empresa e o que precisa ser feito.</div>
+  <div class="bar"></div>
+
+  <svg class="wave" width="420" height="126" viewBox="0 0 300 90" aria-hidden="true">
+    <g fill="#1b4a5a">
+      <rect x="0" y="62" width="7" height="20" rx="1.5"/><rect x="12" y="56" width="7" height="26" rx="1.5"/><rect x="24" y="66" width="7" height="16" rx="1.5"/><rect x="36" y="58" width="7" height="24" rx="1.5"/><rect x="48" y="64" width="7" height="18" rx="1.5"/><rect x="60" y="54" width="7" height="28" rx="1.5"/><rect x="72" y="62" width="7" height="20" rx="1.5"/><rect x="84" y="60" width="7" height="22" rx="1.5"/>
+      <rect x="180" y="62" width="7" height="20" rx="1.5"/><rect x="192" y="58" width="7" height="24" rx="1.5"/><rect x="204" y="64" width="7" height="18" rx="1.5"/><rect x="216" y="60" width="7" height="22" rx="1.5"/><rect x="228" y="66" width="7" height="16" rx="1.5"/><rect x="240" y="57" width="7" height="25" rx="1.5"/><rect x="252" y="63" width="7" height="19" rx="1.5"/><rect x="264" y="60" width="7" height="22" rx="1.5"/><rect x="276" y="65" width="7" height="17" rx="1.5"/><rect x="288" y="59" width="7" height="23" rx="1.5"/>
+    </g>
+    <g fill="#ff7a1a">
+      <rect x="96" y="44" width="7" height="38" rx="1.5"/><rect x="108" y="20" width="7" height="62" rx="1.5"/><rect x="120" y="6" width="7" height="76" rx="1.5"/><rect x="132" y="12" width="7" height="70" rx="1.5"/><rect x="144" y="28" width="7" height="54" rx="1.5"/><rect x="156" y="48" width="7" height="34" rx="1.5"/><rect x="168" y="58" width="7" height="24" rx="1.5"/>
+    </g>
+  </svg>
+
+  <div class="meta">
+    <div><span>Empresa</span>Frothly (fornecedora de produtos para cerveja caseira)</div>
+    <div><span>Data dos incidentes</span>20 de agosto de 2018</div>
+    <div><span>Público</span>Diretoria e gestão</div>
+    <div><span>Versão</span>1.0 · 24 de novembro de 2026</div>
+    <div><span>Investigação</span>Vinicius Henrique (AhiPy)</div>
+    <div><span>Casos analisados</span>3 de 5</div>
+  </div>
+
+  <div class="status">
+    <span class="pill crit">RISCO ATUAL: CRÍTICO</span>
+    <span><b>Vazamento de e-mails em andamento.</b> Decisão necessária hoje (página 2).</span>
+  </div>
+
+  <div class="note">Documento de estudo. A Frothly e as pessoas citadas são fictícias e fazem parte do dataset público Splunk Boss of the SOC v3. Nenhum sistema real foi analisado.</div>
+</div>
+
+<!-- ======================= 1. RESUMO ======================= -->
+<section>
+  <h2><span class="n">1</span>Resumo</h2>
+  <p class="lead">A Frothly foi invadida por um grupo criminoso organizado, e o invasor ainda recebe cópias dos nossos e-mails.</p>
+  <ul class="clean">
+    <li>O invasor <b>entrou com as senhas corretas de dois funcionários</b>. Não precisou "arrombar" nada.</li>
+    <li>Ele <b>procurou informações financeiras e confidenciais nos e-mails de toda a empresa</b>.</li>
+    <li>Ele <b>criou uma regra no servidor de e-mail que envia cópias escondidas para um endereço externo</b>. Essa regra continua funcionando mesmo se as senhas forem trocadas.</li>
+    <li>Ele <b>ganhou permissão para ler e enviar e-mails em nome da CEO</b>, o que abre caminho para fraudes.</li>
+    <li>Ele <b>espalhou um arquivo malicioso disfarçado de "fotos de festa"</b>, que chegou a <b>7 computadores</b>. Ainda estamos verificando se alguém o abriu.</li>
+  </ul>
+
+  <div class="kpis">
+    <div class="kpi crit"><div class="v">2</div><div class="l">contas de funcionários usadas pelo invasor</div></div>
+    <div class="kpi crit"><div class="v">3</div><div class="l">formas de acesso que ele deixou para continuar dentro</div></div>
+    <div class="kpi"><div class="v">7</div><div class="l">computadores que receberam o arquivo malicioso</div></div>
+    <div class="kpi"><div class="v">~1h30</div><div class="l">entre a primeira ação e a mais grave</div></div>
+    <div class="kpi good"><div class="v">2</div><div class="l">ataques bloqueados pelas defesas automáticas</div></div>
+  </div>
+
+  <div class="callout crit">
+    <span class="t">Decisão necessária hoje</span>
+    Autorizar a remoção imediata da regra de e-mail e dos acessos extras à caixa da CEO, a troca de senhas e o bloqueio dos endereços do invasor. <b>Enquanto a regra existir, os e-mails continuam saindo da empresa.</b> O plano completo está na seção 6.
+  </div>
+</section>
+
+<!-- ======================= 2. SITUAÇÃO ======================= -->
+<section class="page-break">
+  <h2><span class="n">2</span>Situação atual</h2>
+  <table>
+    <thead><tr><th style="width:24%">Área</th><th>O que está acontecendo</th><th style="width:30%">O que significa</th><th class="nowrap" style="width:15%">Status</th></tr></thead>
+    <tbody>
+      <tr><td><b>E-mail corporativo</b></td><td>Uma regra no servidor copia e-mails para fora da empresa</td><td>Informação confidencial saindo <b>agora</b></td><td><span class="st crit">Ativo</span></td></tr>
+      <tr><td><b>Caixa de e-mail da CEO</b></td><td>Acesso total e envio em nome dela liberados para uma conta comprometida</td><td>Leitura de assuntos sigilosos e <b>fraude por e-mail falso da CEO</b></td><td><span class="st crit">Ativo</span></td></tr>
+      <tr><td><b>Contas de funcionários</b></td><td>2 contas usadas pelo invasor, sem verificação em duas etapas</td><td>Uma delas ainda está ativa</td><td><span class="st serious">Parcial</span></td></tr>
+      <tr><td><b>Computadores</b></td><td>Arquivo malicioso chegou a 7 notebooks</td><td>Possível invasão da rede interna</td><td><span class="st warn">Investigando</span></td></tr>
+      <tr><td><b>Ataque por anexo</b></td><td>Planilha maliciosa enviada à diretoria</td><td>Bloqueada pelo filtro de e-mail e pelo antivírus</td><td><span class="st good">Contido</span></td></tr>
+      <tr><td><b>Minerador de criptomoeda</b></td><td>Um site externo usou o processador de notebooks</td><td>Incidente isolado, sem roubo de dados</td><td><span class="st good">Encerrado</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ======================= 5. IMPACTO ======================= -->
+<section>
+  <h2><span class="n">3</span>Impacto para o negócio</h2>
+  <table>
+    <thead><tr><th style="width:28%">Risco</th><th>Por que importa</th><th class="nowrap" style="width:17%">Probabilidade</th></tr></thead>
+    <tbody>
+      <tr><td><b>Vazamento de informação confidencial</b></td><td>E-mails financeiros e estratégicos podem estar com o invasor e com terceiros.</td><td><span class="st crit">Alta</span></td></tr>
+      <tr><td><b>Fraude em nome da CEO</b></td><td>Um pedido de pagamento "assinado" pela CEO, saindo da caixa real dela, é muito difícil de identificar.</td><td><span class="st crit">Alta</span></td></tr>
+      <tr><td><b>Invasão dos computadores</b></td><td>Se alguém abriu o arquivo, o invasor pode controlar máquinas da rede interna.</td><td><span class="st warn">Investigando</span></td></tr>
+      <tr><td><b>Reputação e obrigações legais</b></td><td>Dependendo do que vazou, pode haver dever de comunicar clientes, parceiros ou autoridades.</td><td><span class="st none">A avaliar</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout good">
+    <span class="t">O que funcionou bem</span>
+    O filtro de e-mail e o antivírus barraram a planilha maliciosa, e a conta do Bruce foi desativada no fim da manhã. O problema é que o invasor não dependia só do e-mail: usou contas legítimas, e isso nenhum filtro barra. Por isso a verificação em duas etapas é a medida de maior efeito.
+  </div>
+</section>
+
+<!-- ======================= 3. COMO ACONTECEU ======================= -->
+<section class="page-break">
+  <h2><span class="n">4</span>Como o ataque aconteceu</h2>
+  <p>Para quem não é da área, ajuda pensar na invasão de um escritório. Cada etapa abaixo tem a comparação e o que de fato aconteceu.</p>
+
+  <div class="flow">
+    <div class="step">
+      <div class="num">ETAPA 1</div>
+      <div class="an">As chaves já estavam com ele</div>
+      <div class="tx">Entrou nas contas de <b>Bruce Gist</b> e <b>Fyodor Malteskesko</b> com a senha correta, a partir de Hong Kong. Sem verificação em duas etapas, a senha bastou. Ainda não sabemos como as senhas vazaram.</div>
+    </div>
+    <div class="step good">
+      <div class="num">ETAPA 2 · BLOQUEADA</div>
+      <div class="an">Tentou entregar um pacote com bomba</div>
+      <div class="tx">Pela conta do Bruce, enviou à diretoria uma planilha de "plano financeiro" com código malicioso. <b>O filtro de e-mail e o antivírus barraram.</b></div>
+    </div>
+    <div class="step crit">
+      <div class="num">ETAPA 3</div>
+      <div class="an">Deixou uma armadilha na sala de reunião</div>
+      <div class="tx">No OneDrive do Bruce, colocou um atalho chamado <i>"fotos do happy hour de aniversário do Bruce"</i>, entre fotos de cerveja, com um link público. Como veio de dentro, <b>não passou por filtro nenhum</b> e chegou a 7 computadores.</div>
+    </div>
+    <div class="step crit">
+      <div class="num">ETAPA 4</div>
+      <div class="an">Vasculhou todas as gavetas</div>
+      <div class="tx">Com a conta do Fyodor, que tem poderes de administrador, buscou nos e-mails de <b>todos</b> os funcionários palavras como <i>financial</i>, <i>secret</i> e <i>cromdale</i>.</div>
+    </div>
+    <div class="step crit">
+      <div class="num">ETAPA 5</div>
+      <div class="an">Desviou a correspondência</div>
+      <div class="tx">Criou uma regra que manda <b>cópia escondida dos e-mails</b> para um endereço externo e deu a si mesmo acesso total à caixa da CEO, inclusive para <b>escrever como se fosse ela</b>.</div>
+    </div>
+    <div class="step">
+      <div class="num">ETAPA 6</div>
+      <div class="an">Deixou um bilhete</div>
+      <div class="tx">Ao meio-dia, o mesmo endereço externo escreveu à CEO: <i>"todos os seus dados nos pertencem"</i>. Pelo que vimos, não era blefe.</div>
+    </div>
+  </div>
+
+  <h3>Linha do tempo do dia 20/08/2018</h3>
+  <figure>
+    <svg width="100%" viewBox="0 0 660 330" role="img" aria-label="Linha do tempo dos incidentes de 20 de agosto de 2018">
+      <!-- eixo: 06:30 (x=210) a 12:30 (x=650) => 440px / 360min => 1.2222 px/min -->
+      <g font-size="8" fill="#6f6e69">
+        <line x1="210" y1="24" x2="210" y2="296" stroke="#e3e2de"/><text x="210" y="312" text-anchor="middle">06:30</text>
+        <line x1="283.3" y1="24" x2="283.3" y2="296" stroke="#e3e2de"/><text x="283.3" y="312" text-anchor="middle">07:30</text>
+        <line x1="356.7" y1="24" x2="356.7" y2="296" stroke="#e3e2de"/><text x="356.7" y="312" text-anchor="middle">08:30</text>
+        <line x1="430" y1="24" x2="430" y2="296" stroke="#e3e2de"/><text x="430" y="312" text-anchor="middle">09:30</text>
+        <line x1="503.3" y1="24" x2="503.3" y2="296" stroke="#e3e2de"/><text x="503.3" y="312" text-anchor="middle">10:30</text>
+        <line x1="576.7" y1="24" x2="576.7" y2="296" stroke="#e3e2de"/><text x="576.7" y="312" text-anchor="middle">11:30</text>
+        <line x1="650" y1="24" x2="650" y2="296" stroke="#e3e2de"/><text x="652" y="312" text-anchor="end">12:30</text>
+        <line x1="210" y1="296" x2="650" y2="296" stroke="#0b0b0b"/>
+      </g>
+      <g font-size="7.5" font-weight="600" fill="#6f6e69" letter-spacing=".6">
+        <text x="0" y="16">ATAQUE PRINCIPAL</text>
+        <text x="0" y="270">INCIDENTE PARALELO</text>
+      </g>
+      <g font-size="9" fill="#0b0b0b">
+        <!-- linhas: y centro = 34 + i*24 -->
+        <text x="0" y="37">Planilha maliciosa (bloqueada)</text>
+        <path d="M240.6 29 l5 5 l-5 5 l-5 -5z" fill="#0f8a3a"/><text x="250" y="37" font-size="8" fill="#3d3c39">06:55</text>
+
+        <text x="0" y="61">Armadilha no OneDrive + link público</text>
+        <rect x="241.8" y="53" width="4" height="10" rx="1.5" fill="#d03b3b"/><text x="252" y="61" font-size="8" fill="#3d3c39">06:56–06:58</text>
+
+        <text x="0" y="85">Arquivo chega a 7 computadores</text>
+        <rect x="245.4" y="77" width="4" height="10" rx="1.5" fill="#c2410c"/><text x="256" y="85" font-size="8" fill="#3d3c39">06:59–07:01</text>
+
+        <text x="0" y="109">Logins a partir de Hong Kong</text>
+        <rect x="304.1" y="101" width="28.1" height="10" rx="2" fill="#8a8984"/><text x="338" y="109" font-size="8" fill="#3d3c39">07:47–08:10</text>
+
+        <text x="0" y="133">Busca nos e-mails de todos</text>
+        <path d="M305.3 125 l5 5 l-5 5 l-5 -5z" fill="#d03b3b"/><text x="315" y="133" font-size="8" fill="#3d3c39">07:48</text>
+
+        <text x="0" y="157">Acesso total à caixa da CEO</text>
+        <path d="M332.2 149 l5 5 l-5 5 l-5 -5z" fill="#d03b3b"/><text x="342" y="157" font-size="8" fill="#3d3c39">08:10</text>
+
+        <text x="0" y="181">Regra de cópia oculta dos e-mails</text>
+        <path d="M345.7 173 l5 5 l-5 5 l-5 -5z" fill="#d03b3b"/><text x="355" y="181" font-size="8" fill="#3d3c39">08:21</text>
+
+        <text x="0" y="205">Conta do Bruce desativada</text>
+        <path d="M597.4 197 l5 5 l-5 5 l-5 -5z" fill="#0f8a3a"/><text x="590" y="205" font-size="8" fill="#3d3c39" text-anchor="end">11:47</text>
+
+        <text x="0" y="229">E-mail de ameaça à CEO</text>
+        <path d="M631.7 221 l5 5 l-5 5 l-5 -5z" fill="#8a8984"/><text x="623" y="229" font-size="8" fill="#3d3c39" text-anchor="end">12:15</text>
+
+        <text x="0" y="285">Minerador de criptomoeda</text>
+        <rect x="491.1" y="277" width="61.1" height="10" rx="2" fill="#8a8984"/><text x="558" y="285" font-size="8" fill="#3d3c39">10:20–11:10</text>
+      </g>
+      <line x1="0" y1="252" x2="650" y2="252" stroke="#e3e2de" stroke-dasharray="3 3"/>
+    </svg>
+    <figcaption>
+      <span class="st crit">ação grave do invasor</span>&nbsp;&nbsp;
+      <span class="st serious">propagação</span>&nbsp;&nbsp;
+      <span class="st good">defesa ou contenção</span>&nbsp;&nbsp;
+      <span class="st none">contexto</span>
+      <br>Horário de Brasília. Losango = momento pontual; barra = período. As ações mais graves aconteceram em menos de 1h30; a conta do Bruce só foi desativada mais de 4 horas depois.
+    </figcaption>
+  </figure>
+</section>
+
+<!-- ======================= 4. NÚMEROS ======================= -->
+<section class="page-break">
+  <h2><span class="n">5</span>O que o invasor fez, em números</h2>
+  <p>Ações registradas na auditoria do Office 365 a partir do endereço principal do invasor (56 registros), agrupadas pelo tipo de comportamento.</p>
+  <figure>
+    <svg width="100%" viewBox="0 0 660 200" role="img" aria-label="Ações do invasor por tipo">
+      <!-- escala: 18 => 380px ; x0 = 230 -->
+      <g font-size="9.2" fill="#0b0b0b">
+        <text x="0" y="28">Entrou nas contas</text>
+        <rect x="230" y="17" width="380" height="16" rx="3" fill="#2a78d6"/><text x="616" y="29" font-weight="600">18</text>
+        <text x="0" y="62">Abriu e visualizou arquivos</text>
+        <rect x="230" y="51" width="380" height="16" rx="3" fill="#2a78d6"/><text x="616" y="63" font-weight="600">18</text>
+        <text x="0" y="96">Criou e enviou arquivos</text>
+        <rect x="230" y="85" width="190" height="16" rx="3" fill="#2a78d6"/><text x="426" y="97" font-weight="600">9</text>
+        <text x="0" y="130">Compartilhou arquivos</text>
+        <rect x="230" y="119" width="147.8" height="16" rx="3" fill="#2a78d6"/><text x="384" y="131" font-weight="600">7</text>
+        <text x="0" y="164" font-weight="700">Mexeu em e-mails e permissões</text>
+        <rect x="230" y="153" width="84.4" height="16" rx="3" fill="#d03b3b"/><text x="320" y="165" font-weight="700">4</text>
+        <text x="342" y="165" font-size="8.2" fill="#d03b3b">← poucas ações, maior impacto</text>
+      </g>
+      <line x1="230" y1="8" x2="230" y2="180" stroke="#0b0b0b"/>
+      <text x="230" y="195" font-size="7.5" fill="#6f6e69">quantidade de registros</text>
+    </svg>
+  </figure>
+  <p>O número que mais importa é o <b>menor</b>. As quatro ações sobre e-mails e permissões, somadas à regra de cópia criada a partir de um segundo endereço, são as que mantêm o invasor dentro da empresa mesmo depois da troca de senhas.</p>
+
+  <table>
+    <thead><tr><th>Indicador</th><th class="nowrap" style="width:22%">Valor</th></tr></thead>
+    <tbody>
+      <tr><td>Contas de funcionários comprometidas</td><td><b>2</b> (Bruce Gist e Fyodor Malteskesko)</td></tr>
+      <tr><td>Endereços de internet usados pelo invasor</td><td><b>2</b>, ambos em Hong Kong</td></tr>
+      <tr><td>Computadores que receberam o arquivo malicioso</td><td><b>7</b></td></tr>
+      <tr><td>Caixas de e-mail vasculhadas</td><td><b>todas</b></td></tr>
+      <tr><td>Formas de acesso persistente criadas</td><td><b>3</b> (regra de e-mail, acesso total e envio em nome da CEO)</td></tr>
+      <tr><td>Tentativas barradas pelas defesas automáticas</td><td><b>2</b> (filtro de e-mail e antivírus)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ======================= 6/7. PLANO ======================= -->
+<section class="page-break">
+  <h2><span class="n">6</span>Plano de ação</h2>
+  <p>As ações estão separadas pelo momento em que precisam acontecer. As do primeiro bloco interrompem o vazamento e não devem esperar.</p>
+
+  <div class="plan">
+    <div class="group now">
+      <h3><span class="st crit">Fazer agora</span> <span class="muted small" style="font-weight:400">interrompem o vazamento e a fraude</span></h3>
+      <div class="check"><div class="box"></div><div><b>Apagar a regra de e-mail "SOX"</b><span>É ela que copia os e-mails para fora. Trocar senhas não a desliga.</span></div></div>
+      <div class="check"><div class="box"></div><div><b>Remover os acessos extras à caixa da CEO</b><span>Tirar da conta do Fyodor o acesso total e o direito de enviar e-mails como a CEO.</span></div></div>
+      <div class="check"><div class="box"></div><div><b>Trocar a senha do Fyodor e encerrar as sessões abertas</b><span>Fecha a porta que ainda está aberta. A conta do Bruce já está desativada.</span></div></div>
+      <div class="check"><div class="box"></div><div><b>Bloquear os endereços do invasor</b><span>Os dois endereços de Hong Kong e o e-mail externo que recebia as cópias.</span></div></div>
+      <div class="check"><div class="box"></div><div><b>Avisar a CEO e o financeiro</b><span>Desconfiar de qualquer pedido urgente de pagamento por e-mail, mesmo vindo da CEO, e confirmar por outro canal.</span></div></div>
+    </div>
+
+    <div class="group soon">
+      <h3><span class="st warn">Próximos dias</span> <span class="muted small" style="font-weight:400">fecham as portas que o invasor usou</span></h3>
+      <div class="check"><div class="box"></div><div><b>Apagar o arquivo malicioso e desativar o link público</b><span>Evita que mais alguém abra as "fotos de festa".</span></div></div>
+      <div class="check"><div class="box"></div><div><b>Exigir verificação em duas etapas de todos os funcionários</b><span>Com ela, uma senha roubada deixa de ser suficiente para entrar. É a medida de maior efeito.</span></div></div>
+      <div class="check"><div class="box"></div><div><b>Revisar quem precisa ser administrador</b><span>A conta mais perigosa era a com mais poder. Quanto menos administradores, menor o estrago possível.</span></div></div>
+      <div class="check"><div class="box doing"></div><div><b>Concluir a análise dos 7 computadores</b><span>Saber se o invasor também está na rede interna. Em andamento (caso 04).</span></div></div>
+    </div>
+
+    <div class="group later">
+      <h3><span class="st none" style="color:#0a7c96">Melhorias recomendadas</span> <span class="muted small" style="font-weight:400">reduzem a chance de acontecer de novo</span></h3>
+      <div class="check"><div class="box"></div><div><b>Criar alertas para novas regras de e-mail e novas permissões em caixas de e-mail</b><span>Detectar a próxima tentativa em minutos, e não em horas.</span></div></div>
+      <div class="check"><div class="box"></div><div><b>Descobrir como as senhas vazaram</b><span>Reuso de senha, golpe anterior ou outro caminho. Sem isso, o problema pode se repetir com outras contas.</span></div></div>
+      <div class="check"><div class="box"></div><div><b>Avaliar com o jurídico a necessidade de comunicar terceiros</b><span>Depende do conteúdo dos e-mails expostos.</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 7. CASOS ======================= -->
+<section class="page-break">
+  <h2><span class="n">7</span>Investigações</h2>
+  <p>Cada caso é uma investigação técnica separada, documentada passo a passo no repositório do projeto.</p>
+  <table>
+    <thead><tr><th class="nowrap">#</th><th style="width:28%">Caso</th><th>Em uma frase</th><th class="nowrap">Gravidade</th><th class="nowrap">Status</th></tr></thead>
+    <tbody>
+      <tr><td>01</td><td><b>Minerador de criptomoeda</b></td><td>Um fórum externo usou o processador de notebooks para minerar criptomoeda. Sem roubo de dados.</td><td><span class="st warn">Média</span></td><td><span class="st good">Encerrado</span></td></tr>
+      <tr><td>02</td><td><b>Phishing e contas comprometidas</b></td><td>A planilha maliciosa foi barrada, mas revelou que o invasor já tinha as senhas de duas contas.</td><td><span class="st crit">Alta</span></td><td><span class="st good">Concluído</span></td></tr>
+      <tr><td>03</td><td><b>O que o invasor fez no Office 365</b></td><td>Armadilha no OneDrive, busca nos e-mails de todos e regra de cópia oculta para fora.</td><td><span class="st crit">Crítica</span></td><td><span class="st good">Concluído</span></td></tr>
+      <tr><td>04</td><td><b>O arquivo nos 7 computadores</b></td><td>Alguém abriu o atalho? O invasor chegou à rede interna?</td><td><span class="st none">—</span></td><td><span class="st warn">Próximo</span></td></tr>
+      <tr><td>05</td><td><b>Nuvem da Amazon (AWS)</b></td><td>Configurações da infraestrutura em nuvem, independentes deste ataque.</td><td><span class="st none">—</span></td><td><span class="st none">Planejado</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>O que vem a seguir</h3>
+  <ul class="clean">
+    <li><b>Caso 04, computadores:</b> verificar nos 7 notebooks se o atalho foi apenas sincronizado pelo OneDrive ou se alguém o abriu. O notebook do Bud Stoll teve uma segunda atividade às 08:28 e é o primeiro a ser examinado. Se houve execução, o passo seguinte é descobrir o que o invasor fez dentro da rede.</li>
+    <li><b>Caso 05, AWS:</b> auditoria da conta de nuvem: quem acessou, com ou sem verificação em duas etapas, e se algum dado ficou exposto publicamente.</li>
+  </ul>
+  <p class="muted small">Este relatório é atualizado ao final de cada caso, com a situação e o plano de ação revisados.</p>
+
+  <h3>Indicadores do ataque (para a equipe técnica)</h3>
+  <table class="small">
+    <tbody>
+      <tr><td style="width:34%"><b>Endereços do invasor</b></td><td>104.207.83.63 · 199.66.91.253 (Hong Kong)</td></tr>
+      <tr><td><b>E-mail externo</b></td><td>hyunki1984@naver.com</td></tr>
+      <tr><td><b>Arquivos maliciosos</b></td><td>Frothly-Brewery-Financial-Planning-FY2019-Draft.xlsm · BRUCE BIRTHDAY HAPPY HOUR PICS.lnk</td></tr>
+      <tr><td><b>Regra de e-mail</b></td><td>SOX (cópia oculta para o e-mail externo)</td></tr>
+      <tr><td><b>Contas comprometidas</b></td><td>bgist@froth.ly · fyodor@froth.ly</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ======================= 8. GLOSSÁRIO ======================= -->
+<section class="page-break">
+  <h2><span class="n">8</span>Glossário</h2>
+  <table class="gloss">
+    <tbody>
+      <tr><td>Grupo APT</td><td>Grupo de invasores organizado e persistente, que ataca um alvo específico com um objetivo definido.</td></tr>
+      <tr><td>Phishing</td><td>E-mail falso feito para enganar alguém a abrir um arquivo ou entregar uma senha.</td></tr>
+      <tr><td>Conta comprometida</td><td>Conta de funcionário que está sendo usada por outra pessoa.</td></tr>
+      <tr><td>Verificação em duas etapas</td><td>Além da senha, um código no celular. Sem ele, a senha roubada não basta. Também chamada de MFA.</td></tr>
+      <tr><td>Persistência</td><td>Qualquer truque para o invasor continuar com acesso depois de ser descoberto.</td></tr>
+      <tr><td>Regra de transporte</td><td>Regra no servidor de e-mail que copia ou redireciona mensagens automaticamente.</td></tr>
+      <tr><td>Atalho (.lnk)</td><td>Arquivo de atalho do Windows. Parece inofensivo, mas pode executar comandos ao ser aberto.</td></tr>
+      <tr><td>Indicador (IOC)</td><td>Pista concreta do ataque: endereço de internet, nome de arquivo, e-mail do invasor.</td></tr>
+      <tr><td>SOC</td><td>Equipe que monitora a segurança da empresa e responde a incidentes.</td></tr>
+      <tr><td>Contenção</td><td>Ações para parar o estrago enquanto a investigação continua.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ======================= 9. SOBRE ======================= -->
+<section>
+  <h2><span class="n">9</span>Sobre este documento</h2>
+  <table>
+    <tbody>
+      <tr><td style="width:30%"><b>Investigação e análise</b></td><td>Vinicius Henrique (AhiPy), Analista de Segurança da Informação Júnior com foco em SOC N1 · github.com/AhiPy</td></tr>
+      <tr><td><b>Redação</b></td><td>Elaborado com apoio do Claude (Anthropic), a partir das investigações, anotações e evidências do autor. As conclusões foram revisadas por ele.</td></tr>
+      <tr><td><b>Base técnica</b></td><td>Investigações em SPL no Splunk Enterprise, documentadas em github.com/AhiPy/splunk-bots-investigations</td></tr>
+      <tr><td><b>Fonte dos dados</b></td><td>Dataset público Splunk Boss of the SOC v3. Empresa e pessoas fictícias; nenhum sistema real foi analisado.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Histórico de versões</h3>
+  <table class="small">
+    <thead><tr><th style="width:12%">Versão</th><th style="width:20%">Data</th><th>Alteração</th></tr></thead>
+    <tbody>
+      <tr><td>1.0</td><td>24/11/2026</td><td>Primeira versão: casos 01, 02 e 03.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+</body>
+</html>
