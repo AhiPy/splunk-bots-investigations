@@ -1,6 +1,6 @@
 <div align="center">
 
-# Relatório Executivo de Incidentes de Segurança
+# Relatório de Incidentes
 
 **Frothly · 20 de agosto de 2018**
 
